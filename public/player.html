@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>N64 Funbox - Emulator Runtime</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, sans-serif;
+      color: #fff;
+    }
+    #game {
+      width: 100%;
+      height: 100%;
+    }
+    /* Retro/modern loading screen styling */
+    #loader {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #070814;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(0, 240, 255, 0.1);
+      border-radius: 50%;
+      border-top-color: #00f0ff;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .loader-text {
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: bold;
+      color: #00f0ff;
+      text-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+    }
+    .loader-subtext {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      margin-top: 0.5rem;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <div id="loader">
+    <div class="spinner"></div>
+    <div class="loader-text">Loading Core</div>
+    <div class="loader-subtext">Initializing WebAssembly Core & Game Files...</div>
+  </div>
+
+  <div id="game"></div>
+
+  <script type="text/javascript">
+    // Parse query params to configure emulator
+    const params = new URLSearchParams(window.location.search);
+    const gameUrl = params.get('gameUrl');
+    const gameName = params.get('gameName') || 'N64 Game';
+    
+    // Set dynamic loader text
+    const loaderText = document.querySelector('.loader-text');
+    if (loaderText) {
+      loaderText.textContent = 'Loading N64 Core';
+    }
+
+    // Assign global configuration to EJS
+    window.EJS_player = '#game';
+    window.EJS_core = 'n64';
+    window.EJS_gameUrl = gameUrl;
+    window.EJS_gameName = gameName;
+    window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+    
+    // Configure default controls object structure in EJS format:
+    // N64 controller mapping maps physical controls to retroarch/EJS standard indexes:
+    // Retroarch N64 mappings:
+    // 0 -> B (maps to N64 B)
+    // 8 -> A (maps to N64 A)
+    // 12 -> L2 (maps to N64 Z Trigger)
+    // 3 -> START (maps to N64 Start)
+    // 4, 5, 6, 7 -> Arrow keys (maps to D-Pad)
+    // 10 -> L (maps to N64 L)
+    // 11 -> R (maps to N64 R)
+    // R STICK structures (23 Up, 22 Down, 21 Left, 20 Right) represent N64 C-buttons!
+    // L STICK structures (19 Up, 18 Down, 17 Left, 16 Right) represent N64 Analog stick!
+    window.EJS_defaultControls = {
+      0: {
+        0: { 'value': 'x', 'value2': 'BUTTON_2' },   // N64 B Button
+        8: { 'value': 'z', 'value2': 'BUTTON_1' },   // N64 A Button
+        12: { 'value': 'shift', 'value2': 'BUTTON_7' }, // N64 Z Trigger
+        3: { 'value': 'enter', 'value2': 'START' },  // Start
+        
+        // DPAD
+        4: { 'value': '', 'value2': 'DPAD_UP' },
+        5: { 'value': '', 'value2': 'DPAD_DOWN' },
+        6: { 'value': '', 'value2': 'DPAD_LEFT' },
+        7: { 'value': '', 'value2': 'DPAD_RIGHT' },
+        
+        // L / R Shoulder
+        10: { 'value': 'q', 'value2': 'LEFT_TOP_SHOULDER' },
+        11: { 'value': 'e', 'value2': 'RIGHT_TOP_SHOULDER' },
+        
+        // L STICK (N64 Analog Stick mapping - bind default arrow keys)
+        19: { 'value': 'up arrow', 'value2': 'LEFT_STICK_Y:-1' },
+        18: { 'value': 'down arrow', 'value2': 'LEFT_STICK_Y:+1' },
+        17: { 'value': 'left arrow', 'value2': 'LEFT_STICK_X:-1' },
+        16: { 'value': 'right arrow', 'value2': 'LEFT_STICK_X:+1' },
+        
+        // R STICK (N64 C-Buttons mapping - bind WASD)
+        23: { 'value': 'w', 'value2': 'RIGHT_STICK_Y:-1' }, // C-UP
+        22: { 'value': 's', 'value2': 'RIGHT_STICK_Y:+1' }, // C-DOWN
+        21: { 'value': 'a', 'value2': 'RIGHT_STICK_X:-1' }, // C-LEFT
+        20: { 'value': 'd', 'value2': 'RIGHT_STICK_X:+1' }  // C-RIGHT
+      },
+      1: {},
+      2: {},
+      3: {}
+    };
+
+    // Callback when emulator core has loaded successfully
+    window.EJS_ready = function() {
+      const loader = document.getElementById('loader');
+      if (loader) {
+        loader.style.opacity = '0';
+        setTimeout(() => {
+          loader.style.display = 'none';
+        }, 500);
+      }
+    };
+  </script>
+  <!-- Load the EmulatorJS script loader -->
+  <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
+</body>
+</html>

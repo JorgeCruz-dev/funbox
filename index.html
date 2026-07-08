@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fubox Retro - Nintendo 64 Emulator</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="glow-bg">
+    <div class="glow-circle primary-glow"></div>
+    <div class="glow-circle secondary-glow"></div>
+  </div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="main-header">
+      <div class="logo">
+        <i class="fa-solid fa-cube logo-icon"></i>
+        <h1>N64 <span class="accent-text">FUNBOX</span></h1>
+      </div>
+      <p class="tagline">Nintendo 64 Web Emulation Station</p>
+    </header>
+
+    <!-- Main Grid Layout -->
+    <main class="dashboard-grid">
+      
+      <!-- Left Column: Controls & System Info -->
+      <section class="side-panel">
+        
+        <!-- Controls Guide -->
+        <div class="glass-card panel-card controls-card">
+          <div class="card-header">
+            <i class="fa-solid fa-keyboard header-icon"></i>
+            <h2>N64 Controller Map</h2>
+          </div>
+          <div class="card-body">
+            <div class="control-grid">
+              <div class="control-row"><span>Analog Stick</span><kbd><i class="fa-solid fa-arrows-up-down-left-right"></i> Arrows</kbd></div>
+              <div class="control-row"><span>Start Button</span><kbd>Enter</kbd></div>
+              <div class="control-row"><span>Button A</span><kbd>Z</kbd></div>
+              <div class="control-row"><span>Button B</span><kbd>X</kbd></div>
+              <div class="control-row"><span>Z Trigger</span><kbd>Shift</kbd></div>
+              <div class="control-row"><span>C-Buttons</span><kbd>W, A, S, D</kbd></div>
+              <div class="control-row"><span>L / R Shoulder</span><kbd>Q / E</kbd></div>
+            </div>
+            <p class="controllers-tip"><i class="fa-solid fa-circle-info"></i> Plug in any standard USB/Bluetooth controller (PS5, Xbox, Switch) and it will map automatically!</p>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Right Column: Game library -->
+      <section class="main-panel">
+        
+        <!-- Game Library Title & Filters -->
+        <div class="library-header-bar">
+          <h2 id="library-title">N64 Games Library</h2>
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="search-input" placeholder="Search library...">
+          </div>
+        </div>
+
+        <!-- Featured Games Grid -->
+        <div class="games-grid" id="games-container">
+          <!-- Game cards will be dynamically loaded via JS -->
+        </div>
+
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>© 2026 Funbox Retro. Powered by <a href="https://emulatorjs.org/" target="_blank" rel="noopener noreferrer">EmulatorJS</a>. Serve offline backups of your game files.</p>
+    </footer>
+  </div>
+
+  <!-- Fullscreen Emulator Player Modal Overlay -->
+  <div class="emulator-overlay" id="emulator-modal" style="display: none;">
+    <div class="emulator-modal-header">
+      <div class="modal-game-info">
+        <i class="fa-solid fa-compact-disc spin-disc"></i>
+        <h3 id="modal-game-title">Loading Game...</h3>
+      </div>
+      <button class="btn btn-danger close-modal-btn" id="close-emulator-btn">
+        <i class="fa-solid fa-power-off"></i> Exit Game
+      </button>
+    </div>
+    <div class="emulator-container-wrapper">
+      <iframe id="emulator-iframe" src="about:blank" allow="autoplay; gamepad" frameborder="0"></iframe>
+    </div>
+  </div>
+
+  <!-- Game Details Modal (for unconfigured games) -->
+  <div class="modal-backdrop" id="details-modal" style="display: none;">
+    <div class="glass-card modal-card">
+      <button class="modal-close-btn" id="close-details-btn"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-body-content">
+        <div class="modal-game-hero" id="modal-hero-bg">
+          <div class="modal-hero-overlay"></div>
+          <div class="modal-hero-details">
+            <span class="game-meta-tag" id="detail-game-year">1997</span>
+            <h2 id="detail-game-title">GoldenEye 007</h2>
+            <p id="detail-game-publisher">Nintendo</p>
+          </div>
+        </div>
+        
+        <div class="modal-game-description">
+          <h3>About the Game</h3>
+          <p id="detail-game-desc">Description text...</p>
+        </div>
+
+        <div class="modal-setup-instructions">
+          <h3>How to Play</h3>
+          <div class="instruction-box">
+            <div class="step">
+              <span class="step-num">Instructions</span>
+              <p>Place your game file in the server directory:<br>
+              <code id="detail-expected-path">C:\Users\jorge\watchdogs\funbox\public\games\GoldenEye 007 (USA).z64</code></p>
+              <p style="margin-top: 0.5rem; color: var(--color-warning);">Once placed, reload the page to play!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vite entry script -->
+  <script type="module" src="/src/client/main.ts"></script>
+</body>
+</html>

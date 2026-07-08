@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PSX Funbox - Classic PlayStation Emulator</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="glow-bg">
+    <div class="glow-circle cyan"></div>
+    <div class="glow-circle magenta"></div>
+  </div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="main-header">
+      <div class="logo">
+        <i class="fa-solid fa-gamepad logo-icon"></i>
+        <h1>PSX <span class="accent-text">FUNBOX</span></h1>
+      </div>
+      <p class="tagline">PlayStation 1 Retro Emulation Center</p>
+    </header>
+
+    <!-- Main Grid Layout -->
+    <main class="dashboard-grid">
+      
+      <!-- Left Column: Controls & System Info -->
+      <section class="side-panel">
+        
+        <!-- BIOS Cache Manager -->
+        <div class="glass-card panel-card bios-card" id="bios-panel">
+          <div class="card-header">
+            <i class="fa-solid fa-microchip header-icon"></i>
+            <h2>System BIOS</h2>
+          </div>
+          <div class="card-body">
+            <p class="panel-desc">PlayStation 1 requires a BIOS file (e.g. <code>scph5501.bin</code>) for full audio/video compatibility.</p>
+            
+            <div class="status-indicator-box">
+              <span class="status-label">Status:</span>
+              <span id="bios-status-badge" class="status-badge error">
+                <i class="fa-solid fa-triangle-exclamation"></i> Missing BIOS
+              </span>
+            </div>
+
+            <div class="bios-actions">
+              <label for="bios-upload-input" class="action-btn file-btn">
+                <i class="fa-solid fa-upload"></i> Upload BIOS File
+                <input type="file" id="bios-upload-input" accept=".bin" style="display: none;">
+              </label>
+              <button id="clear-bios-btn" class="action-btn danger-btn" style="display: none;">
+                <i class="fa-solid fa-trash"></i> Reset BIOS
+              </button>
+            </div>
+            
+            <div id="bios-info-details" class="info-details-box" style="display: none;">
+              <span class="info-label">Active BIOS:</span>
+              <span id="bios-active-name" class="info-value">None</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls Guide -->
+        <div class="glass-card panel-card controls-card">
+          <div class="card-header">
+            <i class="fa-solid fa-keyboard header-icon"></i>
+            <h2>Controller Map</h2>
+          </div>
+          <div class="card-body">
+            <div class="control-grid">
+              <div class="control-row"><span>D-Pad</span><kbd><i class="fa-solid fa-arrows-up-down-left-right"></i> Arrows</kbd></div>
+              <div class="control-row"><span>Select</span><kbd>Shift</kbd></div>
+              <div class="control-row"><span>Start</span><kbd>Enter</kbd></div>
+              <div class="control-row"><span>Cross (✖)</span><kbd>Z</kbd></div>
+              <div class="control-row"><span>Circle (●)</span><kbd>X</kbd></div>
+              <div class="control-row"><span>Square (■)</span><kbd>A</kbd></div>
+              <div class="control-row"><span>Triangle (▲)</span><kbd>S</kbd></div>
+              <div class="control-row"><span>L1 / R1</span><kbd>Q / W</kbd></div>
+              <div class="control-row"><span>L2 / R2</span><kbd>E / R</kbd></div>
+            </div>
+            <p class="controllers-tip"><i class="fa-solid fa-circle-info"></i> Standard USB controllers are supported natively! Plug your gamepad in and press any button inside the game.</p>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Right Column: Game library / Instant Loader -->
+      <section class="main-panel">
+        
+        <!-- Drag and Drop ROM Loader -->
+        <div class="glass-card drag-drop-card" id="drop-zone">
+          <div class="drag-drop-content">
+            <div class="drag-icon-box">
+              <i class="fa-solid fa-cloud-arrow-up glow-icon"></i>
+            </div>
+            <div class="drag-text">
+              <h3>Drag & Drop Game ROM</h3>
+              <p>Supports <code>.chd</code>, <code>.bin</code>, <code>.cue</code>, <code>.pbp</code>, <code>.iso</code> formats</p>
+            </div>
+            <div class="drag-action-divider">
+              <span>OR</span>
+            </div>
+            <label for="rom-upload-input" class="btn btn-primary glow-btn">
+              <i class="fa-solid fa-folder-open"></i> Browse Local File
+              <input type="file" id="rom-upload-input" accept=".chd,.bin,.cue,.pbp,.iso,.img" style="display: none;">
+            </label>
+          </div>
+        </div>
+
+        <!-- Game Library Title & Filters -->
+        <div class="library-header-bar">
+          <h2>Featured Game Library</h2>
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="search-input" placeholder="Search library...">
+          </div>
+        </div>
+
+        <!-- Featured Games Grid -->
+        <div class="games-grid" id="games-container">
+          <!-- Game cards will be dynamically loaded via JS -->
+        </div>
+
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>© 2026 PSX Funbox. Powered by <a href="https://emulatorjs.org/" target="_blank" rel="noopener noreferrer">EmulatorJS</a>. For personal, offline evaluation and backup gameplay.</p>
+    </footer>
+  </div>
+
+  <!-- Fullscreen Emulator Player Modal Overlay -->
+  <div class="emulator-overlay" id="emulator-modal" style="display: none;">
+    <div class="emulator-modal-header">
+      <div class="modal-game-info">
+        <i class="fa-solid fa-compact-disc spin-disc"></i>
+        <h3 id="modal-game-title">Loading Game...</h3>
+      </div>
+      <button class="btn btn-danger close-modal-btn" id="close-emulator-btn">
+        <i class="fa-solid fa-power-off"></i> Exit Game
+      </button>
+    </div>
+    <div class="emulator-container-wrapper">
+      <iframe id="emulator-iframe" src="about:blank" allow="autoplay; gamepad" frameborder="0"></iframe>
+    </div>
+  </div>
+
+  <!-- Game Details Modal (for unconfigured games) -->
+  <div class="modal-backdrop" id="details-modal" style="display: none;">
+    <div class="glass-card modal-card">
+      <button class="modal-close-btn" id="close-details-btn"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-body-content">
+        <div class="modal-game-hero" id="modal-hero-bg">
+          <div class="modal-hero-overlay"></div>
+          <div class="modal-hero-details">
+            <span class="game-meta-tag" id="detail-game-year">1997</span>
+            <h2 id="detail-game-title">Castlevania</h2>
+            <p id="detail-game-publisher">Konami</p>
+          </div>
+        </div>
+        
+        <div class="modal-game-description">
+          <h3>About the Game</h3>
+          <p id="detail-game-desc">Description text...</p>
+        </div>
+
+        <div class="modal-setup-instructions">
+          <h3>How to Play</h3>
+          <div class="instruction-box">
+            <div class="step">
+              <span class="step-num">Option 1</span>
+              <p>Place your game file in the server directory:<br>
+              <code id="detail-expected-path">C:\Users\jorge\watchdogs\funbox\public\games\castlevania_sotn.chd</code></p>
+            </div>
+            <div class="step-divider"><span>OR</span></div>
+            <div class="step">
+              <span class="step-num">Option 2</span>
+              <p>Select your local ROM file from your PC to play instantly without moving it:</p>
+              <label for="rom-direct-upload" class="action-btn file-btn">
+                <i class="fa-solid fa-file-invoice"></i> Select ROM File
+                <input type="file" id="rom-direct-upload" accept=".chd,.bin,.cue,.pbp,.iso" style="display: none;">
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript logic -->
+  <script src="main.js"></script>
+</body>
+</html>
