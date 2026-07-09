@@ -14,11 +14,8 @@ Make sure you have [Node.js](https://nodejs.org/) installed, then run the comman
 npm install
 ```
 
-### Step 2: Unzip Your Game ROMs
-Your game files are stored inside the `public/games` directory. Because GitHub has storage limit guidelines, some of your game files may be compressed or zipped.
-- Navigate to the `public/games` folder:
-  [public/games](public/games)
-- Ensure all game ROM files possess direct `.z64` or `.n64` extensions. If they are in a `.zip`, `.rar`, or `.7z` file, **unzip them** into the [public/games](public/games) folder before launching the server. 
+### Step 2: Unzip Your Game ROMs [DEPRECATED]
+A migration of .zip files it's in progress. For now this step is removed and repo is UNDER MAINTENANCE
 
 ### Step 3: Run the Development Server
 Launch both the Vite compiler and the server backend simultaneously in development mode:
