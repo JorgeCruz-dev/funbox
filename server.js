@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const { Readable } = require('stream');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,6 +19,42 @@ app.use((req, res, next) => {
 
 // Serve static assets from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Proxy endpoint to bypass CORS when streaming ROMs from the internet
+app.get('/api/rom-proxy', async (req, res) => {
+  const romUrl = req.query.url;
+  if (!romUrl) {
+    return res.status(400).send('Missing url parameter');
+  }
+
+  try {
+    const response = await fetch(romUrl);
+    if (!response.ok) {
+      return res.status(response.status).send(`Failed to fetch ROM: ${response.statusText}`);
+    }
+
+    const contentType = response.headers.get('content-type') || 'application/octet-stream';
+    const contentLength = response.headers.get('content-length');
+
+    res.setHeader('Content-Type', contentType);
+    if (contentLength) {
+      res.setHeader('Content-Length', contentLength);
+    }
+    
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    if (response.body) {
+      const nodeStream = Readable.fromWeb(response.body);
+      nodeStream.pipe(res);
+    } else {
+      res.status(500).send('No response body available from source');
+    }
+  } catch (error) {
+    console.error('Error proxying ROM:', error);
+    res.status(500).send(`Error proxying ROM: ${error.message}`);
+  }
+});
 
 // Endpoint to inspect files under games/ and bios/
 app.get('/api/status', (req, res) => {

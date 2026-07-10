@@ -34,13 +34,38 @@
       <!-- Left Column: Controls & System Info -->
       <section class="side-panel">
         
+        <!-- System Selector Section -->
+        <div class="glass-card panel-card system-card">
+          <div class="card-header">
+            <i class="fa-solid fa-gamepad header-icon"></i>
+            <h2>Select System</h2>
+          </div>
+          <div class="card-body">
+            <p class="panel-desc">Choose a console to view and play its available library of retro classics.</p>
+            <div class="system-selector">
+              <button class="system-btn active" id="system-btn-n64" data-system="n64">
+                <i class="fa-solid fa-cube"></i>
+                <span>Nintendo 64</span>
+              </button>
+              <button class="system-btn" id="system-btn-snes" data-system="snes">
+                <i class="fa-solid fa-gamepad"></i>
+                <span>Super Nintendo</span>
+              </button>
+              <button class="system-btn" id="system-btn-gba" data-system="gba">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+                <span>Game Boy Advance</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- Controls Guide -->
         <div class="glass-card panel-card controls-card">
           <div class="card-header">
             <i class="fa-solid fa-keyboard header-icon"></i>
-            <h2>N64 Controller Map</h2>
+            <h2 id="controls-title">N64 Controller Map</h2>
           </div>
-          <div class="card-body">
+          <div class="card-body" id="controls-body">
             <div class="control-grid">
               <div class="control-row"><span>Analog Stick</span><kbd><i class="fa-solid fa-arrows-up-down-left-right"></i> Arrows</kbd></div>
               <div class="control-row"><span>Start Button</span><kbd>Enter</kbd></div>

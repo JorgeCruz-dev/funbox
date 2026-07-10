@@ -1,6 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
+import { Readable } from 'stream';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,6 +26,44 @@ const publicPath = path.join(rootDir, 'public');
 const staticDir = fs.existsSync(distPath) ? distPath : publicPath;
 app.use(express.static(staticDir));
 
+// Proxy endpoint to bypass CORS when streaming ROMs from the internet
+app.get('/api/rom-proxy', async (req, res) => {
+  const romUrl = req.query.url as string;
+  if (!romUrl) {
+    return res.status(400).send('Missing url parameter');
+  }
+
+  try {
+    const response = await fetch(romUrl);
+    if (!response.ok) {
+      return res.status(response.status).send(`Failed to fetch ROM: ${response.statusText}`);
+    }
+
+    // Pass along standard headers
+    const contentType = response.headers.get('content-type') || 'application/octet-stream';
+    const contentLength = response.headers.get('content-length');
+
+    res.setHeader('Content-Type', contentType);
+    if (contentLength) {
+      res.setHeader('Content-Length', contentLength);
+    }
+    
+    // Support range headers (optional but useful)
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    if (response.body) {
+      const nodeStream = Readable.fromWeb(response.body as any);
+      nodeStream.pipe(res);
+    } else {
+      res.status(500).send('No response body available from source');
+    }
+  } catch (error: any) {
+    console.error('Error proxying ROM:', error);
+    res.status(500).send(`Error proxying ROM: ${error.message}`);
+  }
+});
+
 // Endpoint to inspect files under games/
 app.get('/api/status', (req, res) => {
   // Check public folder first (dev), then fallback to dist folder (prod copy)
@@ -44,10 +83,10 @@ app.get('/api/status', (req, res) => {
   if (fs.existsSync(gamesDir)) {
     try {
       const files = fs.readdirSync(gamesDir);
-      // Filter out instructions and keep ROM formats for Nintendo 64
+      // Filter out instructions and keep ROM formats for Nintendo 64 and SNES
       result.games = files.filter(file => {
         const ext = path.extname(file).toLowerCase();
-        return ['.z64', '.n64', '.v64'].includes(ext);
+        return ['.z64', '.n64', '.v64', '.sfc', '.smc'].includes(ext);
       });
     } catch (err) {
       console.error('Error reading games directory:', err);

@@ -1,12 +1,12 @@
-# 🎮 N64 Funbox Emulator Dashboard
+# 🎮 Funbox Retro Emulator Dashboard
 
-A modern, high-performance, glassmorphic Nintendo 64 (N64) retro emulator dashboard powered by EmulatorJS, Vite, and Express (TypeScript).
+A modern, high-performance, glassmorphic multi-system retro emulator dashboard powered by EmulatorJS, Vite, and Express (TypeScript).
 
 ---
 
 ## 🚀 Setup & Installation Instructions
 
-Follow these five steps to install, set up, and start playing your games locally.
+Follow these steps to install and start playing instantly.
 
 ### Step 1: Install Dependencies
 Make sure you have [Node.js](https://nodejs.org/) installed, then run the command to install the required dependencies:
@@ -14,26 +14,30 @@ Make sure you have [Node.js](https://nodejs.org/) installed, then run the comman
 npm install
 ```
 
-### Step 2: Unzip Your Game ROMs [DEPRECATED]
-A migration of .zip files it's in progress. For now this step is removed and repo is UNDER MAINTENANCE
-
-### Step 3: Run the Development Server
+### Step 2: Run the Development Server
 Launch both the Vite compiler and the server backend simultaneously in development mode:
 ```bash
 npm run dev
 ```
 
-### Step 4: Open in Your Browser
+### Step 3: Open in Your Browser
 Once the dev server is up and running, open your web browser and navigate to:
 ```
 http://localhost:5173
 ```
 
+### Step 4: Choose a System and Play
+Use the system selector on the landing page to switch between Nintendo 64, Super Nintendo, and Game Boy Advance libraries.
+
+Game files are streamed from online sources via the local proxy endpoint. You do not need to unzip or place ROM files in the public folder.
+
 ---
 
-## 🛠️ N64 Controller Map (WASD Config)
+## 🛠️ Controller Map
 
-N64 C-Buttons have been remapped to keep inputs natural on physical keyboards:
+### N64 (WASD Config)
+
+N64 C-Buttons are remapped to keep inputs natural on physical keyboards:
 
 | N64 Control | Keyboard Key |
 | :--- | :--- |
@@ -43,6 +47,17 @@ N64 C-Buttons have been remapped to keep inputs natural on physical keyboards:
 | **Button B** | `X` |
 | **Z Trigger** | `Shift` |
 | **C-Buttons (Up / Down / Left / Right)** | `W` `S` `A` `D` |
+| **L / R Shoulders** | `Q` / `E` |
+
+### SNES / GBA
+
+| Control | Keyboard Key |
+| :--- | :--- |
+| **D-Pad** | `↑` `↓` `←` `→` (Arrow Keys) |
+| **Start** | `Enter` |
+| **Select** | `Shift` |
+| **Button A** | `X` |
+| **Button B** | `Z` |
 | **L / R Shoulders** | `Q` / `E` |
 
 ---

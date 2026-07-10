@@ -182,6 +182,69 @@ body {
   overflow: hidden;
 }
 
+/* System Selector CSS */
+.system-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.system-btn {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1.25rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  width: 100%;
+}
+
+.system-btn i {
+  font-size: 1.2rem;
+  transition: var(--transition-smooth);
+}
+
+.system-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+/* Active styles */
+.system-btn[data-system="n64"].active {
+  background: linear-gradient(135deg, rgba(250, 204, 21, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%);
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+  box-shadow: 0 0 15px rgba(250, 204, 21, 0.15);
+}
+
+.system-btn[data-system="snes"].active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+  border-color: var(--color-blue);
+  color: var(--color-blue);
+  box-shadow: 0 0 15px rgba(37, 99, 235, 0.15);
+}
+
+.system-btn[data-system="gba"].active {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(250, 204, 21, 0.05) 100%);
+  border-color: var(--color-green);
+  color: var(--color-green);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+}
+
+.system-btn.active i {
+  transform: scale(1.1);
+}
+
 .card-header {
   padding: 1.25rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);

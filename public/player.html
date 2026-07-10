@@ -76,66 +76,106 @@
     // Parse query params to configure emulator
     const params = new URLSearchParams(window.location.search);
     const gameUrl = params.get('gameUrl');
-    const gameName = params.get('gameName') || 'N64 Game';
+    const gameName = params.get('gameName') || 'Retro Game';
+    const core = params.get('core') || 'n64';
     
     // Set dynamic loader text
     const loaderText = document.querySelector('.loader-text');
     if (loaderText) {
-      loaderText.textContent = 'Loading N64 Core';
+      loaderText.textContent = `Loading ${core.toUpperCase()} Core`;
     }
 
     // Assign global configuration to EJS
     window.EJS_player = '#game';
-    window.EJS_core = 'n64';
+    window.EJS_core = core;
     window.EJS_gameUrl = gameUrl;
     window.EJS_gameName = gameName;
     window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
     
     // Configure default controls object structure in EJS format:
-    // N64 controller mapping maps physical controls to retroarch/EJS standard indexes:
-    // Retroarch N64 mappings:
-    // 0 -> B (maps to N64 B)
-    // 8 -> A (maps to N64 A)
-    // 12 -> L2 (maps to N64 Z Trigger)
-    // 3 -> START (maps to N64 Start)
-    // 4, 5, 6, 7 -> Arrow keys (maps to D-Pad)
-    // 10 -> L (maps to N64 L)
-    // 11 -> R (maps to N64 R)
-    // R STICK structures (23 Up, 22 Down, 21 Left, 20 Right) represent N64 C-buttons!
-    // L STICK structures (19 Up, 18 Down, 17 Left, 16 Right) represent N64 Analog stick!
-    window.EJS_defaultControls = {
-      0: {
-        0: { 'value': 'x', 'value2': 'BUTTON_2' },   // N64 B Button
-        8: { 'value': 'z', 'value2': 'BUTTON_1' },   // N64 A Button
-        12: { 'value': 'shift', 'value2': 'BUTTON_7' }, // N64 Z Trigger
-        3: { 'value': 'enter', 'value2': 'START' },  // Start
-        
-        // DPAD
-        4: { 'value': '', 'value2': 'DPAD_UP' },
-        5: { 'value': '', 'value2': 'DPAD_DOWN' },
-        6: { 'value': '', 'value2': 'DPAD_LEFT' },
-        7: { 'value': '', 'value2': 'DPAD_RIGHT' },
-        
-        // L / R Shoulder
-        10: { 'value': 'q', 'value2': 'LEFT_TOP_SHOULDER' },
-        11: { 'value': 'e', 'value2': 'RIGHT_TOP_SHOULDER' },
-        
-        // L STICK (N64 Analog Stick mapping - bind default arrow keys)
-        19: { 'value': 'up arrow', 'value2': 'LEFT_STICK_Y:-1' },
-        18: { 'value': 'down arrow', 'value2': 'LEFT_STICK_Y:+1' },
-        17: { 'value': 'left arrow', 'value2': 'LEFT_STICK_X:-1' },
-        16: { 'value': 'right arrow', 'value2': 'LEFT_STICK_X:+1' },
-        
-        // R STICK (N64 C-Buttons mapping - bind WASD)
-        23: { 'value': 'w', 'value2': 'RIGHT_STICK_Y:-1' }, // C-UP
-        22: { 'value': 's', 'value2': 'RIGHT_STICK_Y:+1' }, // C-DOWN
-        21: { 'value': 'a', 'value2': 'RIGHT_STICK_X:-1' }, // C-LEFT
-        20: { 'value': 'd', 'value2': 'RIGHT_STICK_X:+1' }  // C-RIGHT
-      },
-      1: {},
-      2: {},
-      3: {}
-    };
+        if (core === 'n64') {
+      window.EJS_defaultControls = {
+        0: {
+          0: { 'value': 'x', 'value2': 'BUTTON_2' },   // N64 B Button
+          8: { 'value': 'z', 'value2': 'BUTTON_1' },   // N64 A Button
+          12: { 'value': 'shift', 'value2': 'BUTTON_7' }, // N64 Z Trigger
+          3: { 'value': 'enter', 'value2': 'START' },  // Start
+          
+          // DPAD
+          4: { 'value': '', 'value2': 'DPAD_UP' },
+          5: { 'value': '', 'value2': 'DPAD_DOWN' },
+          6: { 'value': '', 'value2': 'DPAD_LEFT' },
+          7: { 'value': '', 'value2': 'DPAD_RIGHT' },
+          
+          // L / R Shoulder
+          10: { 'value': 'q', 'value2': 'LEFT_TOP_SHOULDER' },
+          11: { 'value': 'e', 'value2': 'RIGHT_TOP_SHOULDER' },
+          
+          // L STICK (N64 Analog Stick mapping - bind default arrow keys)
+          19: { 'value': 'up arrow', 'value2': 'LEFT_STICK_Y:-1' },
+          18: { 'value': 'down arrow', 'value2': 'LEFT_STICK_Y:+1' },
+          17: { 'value': 'left arrow', 'value2': 'LEFT_STICK_X:-1' },
+          16: { 'value': 'right arrow', 'value2': 'LEFT_STICK_X:+1' },
+          
+          // R STICK (N64 C-Buttons mapping - bind WASD)
+          23: { 'value': 'w', 'value2': 'RIGHT_STICK_Y:-1' }, // C-UP
+          22: { 'value': 's', 'value2': 'RIGHT_STICK_Y:+1' }, // C-DOWN
+          21: { 'value': 'a', 'value2': 'RIGHT_STICK_X:-1' }, // C-LEFT
+          20: { 'value': 'd', 'value2': 'RIGHT_STICK_X:+1' }  // C-RIGHT
+        },
+        1: {},
+        2: {},
+        3: {}
+      };
+    } else if (core === 'gba') {
+      // gba default controls configuration (same key binds as snes basically)
+      window.EJS_defaultControls = {
+        0: {
+          0: { 'value': 'z', 'value2': 'BUTTON_2' },   // GBA B Button
+          8: { 'value': 'x', 'value2': 'BUTTON_1' },   // GBA A Button
+          2: { 'value': 'shift', 'value2': 'SELECT' }, // GBA Select
+          3: { 'value': 'enter', 'value2': 'START' },  // GBA Start
+          
+          // DPAD
+          4: { 'value': 'up arrow', 'value2': 'DPAD_UP' },
+          5: { 'value': 'down arrow', 'value2': 'DPAD_DOWN' },
+          6: { 'value': 'left arrow', 'value2': 'DPAD_LEFT' },
+          7: { 'value': 'right arrow', 'value2': 'DPAD_RIGHT' },
+          
+          // L / R Shoulder
+          10: { 'value': 'q', 'value2': 'LEFT_TOP_SHOULDER' },
+          11: { 'value': 'e', 'value2': 'RIGHT_TOP_SHOULDER' }
+        },
+        1: {},
+        2: {},
+        3: {}
+      };
+    } else {
+      // snes default controls configuration
+      window.EJS_defaultControls = {
+        0: {
+          0: { 'value': 'z', 'value2': 'BUTTON_2' },   // SNES B Button
+          8: { 'value': 'x', 'value2': 'BUTTON_1' },   // SNES A Button
+          1: { 'value': 'a', 'value2': 'BUTTON_4' },   // SNES Y Button
+          9: { 'value': 's', 'value2': 'BUTTON_3' },   // SNES X Button
+          2: { 'value': 'shift', 'value2': 'SELECT' }, // SNES Select
+          3: { 'value': 'enter', 'value2': 'START' },  // SNES Start
+          
+          // DPAD
+          4: { 'value': 'up arrow', 'value2': 'DPAD_UP' },
+          5: { 'value': 'down arrow', 'value2': 'DPAD_DOWN' },
+          6: { 'value': 'left arrow', 'value2': 'DPAD_LEFT' },
+          7: { 'value': 'right arrow', 'value2': 'DPAD_RIGHT' },
+          
+          // L / R Shoulder
+          10: { 'value': 'q', 'value2': 'LEFT_TOP_SHOULDER' },
+          11: { 'value': 'e', 'value2': 'RIGHT_TOP_SHOULDER' }
+        },
+        1: {},
+        2: {},
+        3: {}
+      };
+    }
 
     // Callback when emulator core has loaded successfully
     window.EJS_ready = function() {
