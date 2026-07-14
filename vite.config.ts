@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/', // Base path for GitHub Pages deployment
+  base: './', // Base path for deployment (relative to support subdirectories and Live Server)
   server: {
     // Required headers to enable SharedArrayBuffer in the browser for high performance cores
     headers: {
