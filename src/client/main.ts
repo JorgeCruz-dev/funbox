@@ -271,7 +271,7 @@ async function launchGame(gameUrl: string, gameTitle: string) {
       }
       
       const romBytes = deobfuscateROM(buffer);
-      const blob = new Blob([romBytes], { type: 'application/octet-stream' });
+      const blob = new Blob([romBytes as any], { type: 'application/octet-stream' });
       currentBlobUrl = URL.createObjectURL(blob);
       finalGameUrl = currentBlobUrl;
 

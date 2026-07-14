@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>N64 Funbox - Emulator Runtime</title>
-  <script src="coi-serviceworker.js"></script>
   <style>
-    body, html {
+    body,
+    html {
       margin: 0;
       padding: 0;
       width: 100%;
@@ -16,10 +17,12 @@
       font-family: system-ui, -apple-system, sans-serif;
       color: #fff;
     }
+
     #game {
       width: 100%;
       height: 100%;
     }
+
     /* Retro/modern loading screen styling */
     #loader {
       position: absolute;
@@ -35,6 +38,7 @@
       z-index: 9999;
       transition: opacity 0.5s ease;
     }
+
     .spinner {
       width: 50px;
       height: 50px;
@@ -45,9 +49,13 @@
       margin-bottom: 1.5rem;
       box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
     }
+
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
+
     .loader-text {
       font-size: 1.1rem;
       letter-spacing: 2px;
@@ -56,6 +64,7 @@
       color: #00f0ff;
       text-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
     }
+
     .loader-subtext {
       font-size: 0.85rem;
       color: #9ca3af;
@@ -64,6 +73,7 @@
     }
   </style>
 </head>
+
 <body>
   <div id="loader">
     <div class="spinner"></div>
@@ -79,7 +89,7 @@
     const gameUrl = params.get('gameUrl');
     const gameName = params.get('gameName') || 'Retro Game';
     const core = params.get('core') || 'n64';
-    
+
     // Set dynamic loader text
     const loaderText = document.querySelector('.loader-text');
     if (loaderText) {
@@ -92,32 +102,32 @@
     window.EJS_gameUrl = gameUrl;
     window.EJS_gameName = gameName;
     window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
-    
+
     // Configure default controls object structure in EJS format:
-        if (core === 'n64') {
+    if (core === 'n64') {
       window.EJS_defaultControls = {
         0: {
           0: { 'value': 'x', 'value2': 'BUTTON_2' },   // N64 B Button
           8: { 'value': 'z', 'value2': 'BUTTON_1' },   // N64 A Button
           12: { 'value': 'shift', 'value2': 'BUTTON_7' }, // N64 Z Trigger
           3: { 'value': 'enter', 'value2': 'START' },  // Start
-          
+
           // DPAD
           4: { 'value': '', 'value2': 'DPAD_UP' },
           5: { 'value': '', 'value2': 'DPAD_DOWN' },
           6: { 'value': '', 'value2': 'DPAD_LEFT' },
           7: { 'value': '', 'value2': 'DPAD_RIGHT' },
-          
+
           // L / R Shoulder
           10: { 'value': 'q', 'value2': 'LEFT_TOP_SHOULDER' },
           11: { 'value': 'e', 'value2': 'RIGHT_TOP_SHOULDER' },
-          
+
           // L STICK (N64 Analog Stick mapping - bind default arrow keys)
           19: { 'value': 'up arrow', 'value2': 'LEFT_STICK_Y:-1' },
           18: { 'value': 'down arrow', 'value2': 'LEFT_STICK_Y:+1' },
           17: { 'value': 'left arrow', 'value2': 'LEFT_STICK_X:-1' },
           16: { 'value': 'right arrow', 'value2': 'LEFT_STICK_X:+1' },
-          
+
           // R STICK (N64 C-Buttons mapping - bind WASD)
           23: { 'value': 'w', 'value2': 'RIGHT_STICK_Y:-1' }, // C-UP
           22: { 'value': 's', 'value2': 'RIGHT_STICK_Y:+1' }, // C-DOWN
@@ -136,13 +146,13 @@
           8: { 'value': 'x', 'value2': 'BUTTON_1' },   // GBA A Button
           2: { 'value': 'shift', 'value2': 'SELECT' }, // GBA Select
           3: { 'value': 'enter', 'value2': 'START' },  // GBA Start
-          
+
           // DPAD
           4: { 'value': 'up arrow', 'value2': 'DPAD_UP' },
           5: { 'value': 'down arrow', 'value2': 'DPAD_DOWN' },
           6: { 'value': 'left arrow', 'value2': 'DPAD_LEFT' },
           7: { 'value': 'right arrow', 'value2': 'DPAD_RIGHT' },
-          
+
           // L / R Shoulder
           10: { 'value': 'q', 'value2': 'LEFT_TOP_SHOULDER' },
           11: { 'value': 'e', 'value2': 'RIGHT_TOP_SHOULDER' }
@@ -161,13 +171,13 @@
           9: { 'value': 's', 'value2': 'BUTTON_3' },   // SNES X Button
           2: { 'value': 'shift', 'value2': 'SELECT' }, // SNES Select
           3: { 'value': 'enter', 'value2': 'START' },  // SNES Start
-          
+
           // DPAD
           4: { 'value': 'up arrow', 'value2': 'DPAD_UP' },
           5: { 'value': 'down arrow', 'value2': 'DPAD_DOWN' },
           6: { 'value': 'left arrow', 'value2': 'DPAD_LEFT' },
           7: { 'value': 'right arrow', 'value2': 'DPAD_RIGHT' },
-          
+
           // L / R Shoulder
           10: { 'value': 'q', 'value2': 'LEFT_TOP_SHOULDER' },
           11: { 'value': 'e', 'value2': 'RIGHT_TOP_SHOULDER' }
@@ -179,7 +189,7 @@
     }
 
     // Callback when emulator core has loaded successfully
-    window.EJS_ready = function() {
+    window.EJS_ready = function () {
       const loader = document.getElementById('loader');
       if (loader) {
         loader.style.opacity = '0';
@@ -192,4 +202,5 @@
   <!-- Load the EmulatorJS script loader -->
   <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
 </body>
+
 </html>
