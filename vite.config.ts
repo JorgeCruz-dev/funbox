@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/funbox/', // Base path for GitHub Pages deployment
+  base: '/', // Base path for GitHub Pages deployment
   server: {
     // Required headers to enable SharedArrayBuffer in the browser for high performance cores
     headers: {

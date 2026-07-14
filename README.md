@@ -29,8 +29,6 @@ http://localhost:5173
 ### Step 4: Choose a System and Play
 Use the system selector on the landing page to switch between Nintendo 64, Super Nintendo, and Game Boy Advance libraries.
 
-Game files are streamed from online sources via the local proxy endpoint. You do not need to unzip or place ROM files in the public folder.
-
 ---
 
 ## 🛠️ Controller Map

@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fubox Retro - Nintendo 64 Emulator</title>
-  <script src="/coi-serviceworker.js"></script>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   <!-- FontAwesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- Ambient background glow elements -->
@@ -120,6 +120,11 @@
       </button>
     </div>
     <div class="emulator-container-wrapper">
+      <div id="emulator-loader" class="download-loader" style="display: none;">
+        <div class="spinner"></div>
+        <div class="loader-text">Downloading Game</div>
+        <div class="loader-subtext" id="emulator-loader-progress">Preparing ROM files...</div>
+      </div>
       <iframe id="emulator-iframe" src="about:blank" allow="autoplay; gamepad" frameborder="0"></iframe>
     </div>
   </div>
@@ -149,7 +154,6 @@
             <div class="step">
               <span class="step-num">Instructions</span>
               <p>Place your game file in the server directory:<br>
-              <code id="detail-expected-path">C:\Users\jorge\watchdogs\funbox\public\games\GoldenEye 007 (USA).z64</code></p>
               <p style="margin-top: 0.5rem; color: var(--color-warning);">Once placed, reload the page to play!</p>
             </div>
           </div>

@@ -18,8 +18,3 @@ Thumbs.db
 .env.local
 .env.*.local
 
-# Emulator ROMs and BIOS (avoid committing copyrighted files to GitHub)
-# Keep only the instruction placeholder text files
-public/games/*
-!public/games/PLACE_GAMES_HERE.txt
-!*.zip
