@@ -1,114 +1,208 @@
-import express from 'express';
+import http, { IncomingMessage, ServerResponse } from 'http';
 import fs from 'fs';
 import path from 'path';
 import { Readable } from 'stream';
 
-const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Security and CORS middleware for WebAssembly SharedArrayBuffer requirements
-app.use((req, res, next) => {
-  // Required for multi-threaded EmulatorJS cores (e.g. N64 mupen64plus_next)
-  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
-  // Allow resource requests from other origins if necessary
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
+// Security and CORS headers for EmulatorJS multi-threaded cores
+const HEADERS: Record<string, string> = {
+  'Cross-Origin-Opener-Policy': 'same-origin',
+  'Cross-Origin-Embedder-Policy': 'require-corp',
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+  'Accept-Ranges': 'bytes'
+};
 
-// Determine static file directories
+const MIME_TYPES: Record<string, string> = {
+  '.html': 'text/html',
+  '.css': 'text/css',
+  '.js': 'text/javascript',
+  '.json': 'application/json',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.webp': 'image/webp',
+  '.ico': 'image/x-icon',
+  '.mp3': 'audio/mpeg',
+  '.wav': 'audio/wav',
+  '.mp4': 'video/mp4',
+  '.z64': 'application/octet-stream',
+  '.n64': 'application/octet-stream',
+  '.v64': 'application/octet-stream',
+  '.sfc': 'application/octet-stream',
+  '.smc': 'application/octet-stream',
+  '.gba': 'application/octet-stream',
+  '.bin': 'application/octet-stream',
+  '.chd': 'application/octet-stream',
+  '.cue': 'application/octet-stream',
+  '.pbp': 'application/octet-stream',
+  '.iso': 'application/octet-stream',
+  '.img': 'application/octet-stream',
+};
+
 const rootDir = process.cwd();
 const distPath = path.join(rootDir, 'dist');
 const publicPath = path.join(rootDir, 'public');
-
-// Serve static assets from 'dist' if it exists (production built output), fallback to 'public'
 const staticDir = fs.existsSync(distPath) ? distPath : publicPath;
-app.use(express.static(staticDir));
 
-// Proxy endpoint to bypass CORS when streaming ROMs from the internet
-app.get('/api/rom-proxy', async (req, res) => {
-  const romUrl = req.query.url as string;
-  if (!romUrl) {
-    return res.status(400).send('Missing url parameter');
+const server = http.createServer(async (req: IncomingMessage, res: ServerResponse) => {
+  // Apply standard security & CORS headers to all responses
+  for (const [key, value] of Object.entries(HEADERS)) {
+    res.setHeader(key, value);
   }
 
-  try {
-    const response = await fetch(romUrl);
-    if (!response.ok) {
-      return res.status(response.status).send(`Failed to fetch ROM: ${response.statusText}`);
+  // Parse URL
+  const reqUrl = new URL(req.url || '', `http://${req.headers.host || 'localhost'}`);
+  const pathname = reqUrl.pathname;
+
+  // 1. API: /api/status - returns files inside games/ and bios/
+  if (pathname === '/api/status' && req.method === 'GET') {
+    const devGamesDir = path.join(publicPath, 'games');
+    const prodGamesDir = path.join(distPath, 'games');
+    const gamesDir = fs.existsSync(devGamesDir) ? devGamesDir : prodGamesDir;
+
+    const devBiosDir = path.join(publicPath, 'bios');
+    const prodBiosDir = path.join(distPath, 'bios');
+    const biosDir = fs.existsSync(devBiosDir) ? devBiosDir : prodBiosDir;
+
+    const result = {
+      games: [] as string[],
+      bios: {
+        scph5501: false,
+        scph5500: false,
+        scph5502: false,
+        scph1001: false,
+        any: false
+      }
+    };
+
+    if (fs.existsSync(gamesDir)) {
+      try {
+        const files = fs.readdirSync(gamesDir);
+        result.games = files.filter((file: string) => {
+          const ext = path.extname(file).toLowerCase();
+          return [
+            '.chd', '.bin', '.cue', '.pbp', '.iso', '.img', '.m3u', // PSX
+            '.z64', '.n64', '.v64',                                  // N64
+            '.sfc', '.smc',                                          // SNES
+            '.gba'                                                   // GBA
+          ].includes(ext);
+        });
+      } catch (err) {
+        console.error('Error reading games directory:', err);
+      }
     }
 
-    // Pass along standard headers
-    const contentType = response.headers.get('content-type') || 'application/octet-stream';
-    const contentLength = response.headers.get('content-length');
-
-    res.setHeader('Content-Type', contentType);
-    if (contentLength) {
-      res.setHeader('Content-Length', contentLength);
+    if (fs.existsSync(biosDir)) {
+      try {
+        const files = fs.readdirSync(biosDir);
+        files.forEach((file: string) => {
+          const name = file.toLowerCase();
+          if (name.includes('scph5501')) result.bios.scph5501 = true;
+          if (name.includes('scph5500')) result.bios.scph5500 = true;
+          if (name.includes('scph5502')) result.bios.scph5502 = true;
+          if (name.includes('scph1001')) result.bios.scph1001 = true;
+          if (name.endsWith('.bin')) result.bios.any = true;
+        });
+      } catch (err) {
+        console.error('Error reading bios directory:', err);
+      }
     }
-    
-    // Support range headers (optional but useful)
-    res.setHeader('Accept-Ranges', 'bytes');
-    res.setHeader('Access-Control-Allow-Origin', '*');
 
-    if (response.body) {
-      const nodeStream = Readable.fromWeb(response.body as any);
-      nodeStream.pipe(res);
-    } else {
-      res.status(500).send('No response body available from source');
-    }
-  } catch (error: any) {
-    console.error('Error proxying ROM:', error);
-    res.status(500).send(`Error proxying ROM: ${error.message}`);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(result));
+    return;
   }
-});
 
-// Endpoint to inspect files under games/
-app.get('/api/status', (req, res) => {
-  // Check public folder first (dev), then fallback to dist folder (prod copy)
-  const devGamesDir = path.join(publicPath, 'games');
-  const prodGamesDir = path.join(distPath, 'games');
-  const gamesDir = fs.existsSync(devGamesDir) ? devGamesDir : prodGamesDir;
+  // 2. API: /api/rom-proxy - fetches ROM files from external URL bypassing CORS
+  if (pathname === '/api/rom-proxy' && req.method === 'GET') {
+    const romUrl = reqUrl.searchParams.get('url');
+    if (!romUrl) {
+      res.writeHead(400, { 'Content-Type': 'text/plain' });
+      res.end('Missing url parameter');
+      return;
+    }
 
-  interface ServerStatus {
-    games: string[];
-  }
-
-  const result: ServerStatus = {
-    games: []
-  };
-
-  // Read games directory
-  if (fs.existsSync(gamesDir)) {
     try {
-      const files = fs.readdirSync(gamesDir);
-      // Filter out instructions and keep ROM formats for Nintendo 64 and SNES
-      result.games = files.filter(file => {
-        const ext = path.extname(file).toLowerCase();
-        return ['.z64', '.n64', '.v64', '.sfc', '.smc'].includes(ext);
-      });
-    } catch (err) {
-      console.error('Error reading games directory:', err);
+      const response = await fetch(romUrl);
+      if (!response.ok) {
+        res.writeHead(response.status, { 'Content-Type': 'text/plain' });
+        res.end(`Failed to fetch ROM: ${response.statusText}`);
+        return;
+      }
+
+      const contentType = response.headers.get('content-type') || 'application/octet-stream';
+      const contentLength = response.headers.get('content-length');
+
+      const headers: Record<string, string> = { 'Content-Type': contentType };
+      if (contentLength) {
+        headers['Content-Length'] = contentLength;
+      }
+
+      res.writeHead(200, headers);
+
+      if (response.body) {
+        const nodeStream = Readable.fromWeb(response.body as any);
+        nodeStream.pipe(res);
+      } else {
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('No response body available from source');
+      }
+    } catch (error: any) {
+      console.error('Error proxying ROM:', error);
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end(`Error proxying ROM: ${error.message}`);
+    }
+    return;
+  }
+
+  // 3. Serve Static Files
+  // Resolve safe path
+  const safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
+  let filePath = path.join(staticDir, safePath);
+
+  // Check if file exists, is not a directory. Otherwise direct to index.html
+  let stat: fs.Stats;
+  try {
+    stat = fs.statSync(filePath);
+    if (stat.isDirectory()) {
+      filePath = path.join(staticDir, 'index.html');
+      stat = fs.statSync(filePath);
+    }
+  } catch (err) {
+    // Fallback to index.html for SPA router styles
+    filePath = path.join(staticDir, 'index.html');
+    try {
+      stat = fs.statSync(filePath);
+    } catch (_) {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('File not found');
+      return;
     }
   }
 
-  res.json(result);
+  // Set Content-Type based on extension
+  const ext = path.extname(filePath).toLowerCase();
+  const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+  
+  res.writeHead(200, {
+    'Content-Type': contentType,
+    'Content-Length': stat.size.toString()
+  });
+
+  const readStream = fs.createReadStream(filePath);
+  readStream.pipe(res);
 });
 
-// Fallback to serve index.html (useful in production SPA setups)
-app.get('*', (req, res) => {
-  const indexHtmlFile = fs.existsSync(path.join(distPath, 'index.html')) 
-    ? path.join(distPath, 'index.html') 
-    : path.join(rootDir, 'index.html');
-  res.sendFile(indexHtmlFile);
-});
-
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`=============================================================`);
-  console.log(`   🎮  Funbox Retro Emulator Server is running! 🎮`);
+  console.log(`   🎮  Funbox Retro Emulator Server is running (No Express)! 🎮`);
   console.log(`   🌐  Local URL: http://localhost:${PORT}`);
   console.log(`=============================================================`);
   console.log(`Ensure game files are placed in: ./public/games/`);
+  console.log(`Ensure BIOS files are placed in: ./public/bios/`);
   console.log(`Press Ctrl+C to stop.`);
 });
