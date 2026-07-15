@@ -1,8 +1,7 @@
 import { Game } from "./types";
 
 export const GBA_GAMES: Game[] = [
-  /*
-      // --- GAME BOY ADVANCE (GBA) GAMES ---
+  // --- GAME BOY ADVANCE (GBA) GAMES ---
   {
     id: 'pokemon_ruby_sapphire',
     title: 'Pokémon - Ruby Version & Sapphire Version',
@@ -615,5 +614,5 @@ export const GBA_GAMES: Game[] = [
     icon: 'fa-clone',
     system: 'gba'
   }
-  */
+
 ]

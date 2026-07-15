@@ -8,7 +8,7 @@ export const SNES_GAMES: Game[] = [
     publisher: 'Nintendo',
     year: 1990,
     genre: '2D Platformer',
-    romUrl: 'games/Super Mario World (USA).sfc',
+    romUrl: 'games/mworld.sfc',
     description: 'Help Mario and Luigi rescue Princess Toadstool and defeat the evil Bowser in Dinosaur Land, featuring the debut of Yoshi!',
     gradientClass: 'cover-gradient-1',
     icon: 'fa-egg',
@@ -20,13 +20,13 @@ export const SNES_GAMES: Game[] = [
     publisher: 'Nintendo',
     year: 1992,
     genre: 'Kart Racing',
-    romUrl: 'games/Super Mario Kart (USA).sfc',
+    romUrl: 'games/mkart.sfc',
     description: 'The grandfather of kart racing! Race against iconic Mushroom Kingdom characters in challenging circuits and weapon-filled battles.',
     gradientClass: 'cover-gradient-2',
     icon: 'fa-flag-checkered',
     system: 'snes'
   },
-  /*
+  
   {
     id: 'super_metroid',
     title: 'Super Metroid',
@@ -603,5 +603,4 @@ export const SNES_GAMES: Game[] = [
     icon: 'fa-hand-fist',
     system: 'snes'
   },
-  */
 ]

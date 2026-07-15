@@ -110,6 +110,7 @@ function renderGamesGrid(filterText = '') {
 
   filtered.forEach(game => {
     const isPlayable = !!game.romUrl;
+    const isOnline = isPlayable && game.romUrl.includes("https");
     
     const card = document.createElement('div');
     card.className = `glass-card game-card`;
@@ -120,9 +121,9 @@ function renderGamesGrid(filterText = '') {
           : `<i class="fa-solid ${game.icon} game-cover-placeholder"></i>`
         }
         <div class="game-status-indicator">
-          ${isPlayable 
+          ${isOnline 
             ? '<span class="status-badge success"><i class="fa-solid fa-cloud"></i> Online Stream</span>'
-            : '<span class="status-badge warning"><i class="fa-solid fa-circle-plus"></i> Setup Needed</span>'
+            : '<span class="status-badge warning"><i class="fa-solid fa-hard-drive"></i> Stored locally</span>'
           }
         </div>
         <div class="play-hover-overlay">

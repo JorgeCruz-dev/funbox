@@ -8,7 +8,7 @@ export const N64_GAMES: Game[] = [
     publisher: 'Nintendo',
     year: 1996,
     genre: '3D Platformer',
-    romUrl: 'games/Super Mario 64 (USA).z64',
+    romUrl: 'games/mario.z64',
     description: "The definitive blueprint for 3D platformers. Explore Princess Peach's castle, jump into magical paintings, collect Power Stars, and save Peach from Bowser.",
     gradientClass: 'cover-gradient-2',
     icon: 'fa-crown',
@@ -21,7 +21,7 @@ export const N64_GAMES: Game[] = [
     publisher: 'Nintendo',
     year: 1998,
     genre: 'Action-Adventure',
-    romUrl: 'games/Legend of Zelda, The - Ocarina of Time (USA).z64',
+    romUrl: 'games/ocarina.z64',
     description: 'An epic fantasy masterpiece. Journey through time, traverse sprawling Hyrule landscape, and solve ancient temples to stop Ganondorf.',
     gradientClass: 'cover-gradient-1',
     icon: 'fa-shield-halved',
@@ -33,7 +33,7 @@ export const N64_GAMES: Game[] = [
     publisher: 'Nintendo / Rare',
     year: 1997,
     genre: 'First-Person Shooter',
-    romUrl: 'games/007 - GoldenEye (USA).z64',
+    romUrl: 'games/goldeneye.z64',
     description: 'The legendary first-person shooter that revolutionized console multiplayer. Play as James Bond, navigate through action-packed missions, and engage in split-screen multiplayer matches.',
     gradientClass: 'cover-gradient-1',
     icon: 'fa-user-secret',
@@ -46,7 +46,7 @@ export const N64_GAMES: Game[] = [
     publisher: 'Nintendo',
     year: 1996,
     genre: 'Kart Racing',
-    romUrl: 'games/Mario Kart 64 (USA).z64',
+    romUrl: 'games/kart.z64',
     description: 'Race past competitor players using special items to cross the finish line in a series of colorful tracks like Rainbow Road.',
     gradientClass: 'cover-gradient-3',
     icon: 'fa-flag-checkered',
@@ -58,14 +58,13 @@ export const N64_GAMES: Game[] = [
     publisher: 'Nintendo / HAL Laboratory',
     year: 1999,
     genre: 'Fighting / Brawler',
-    romUrl: 'games/Super Smash Bros. (USA).z64',
+    romUrl: 'games/smash.z64',
     description: 'The classic crossover fighting game. Select iconic Nintendo characters like Mario, Link, Samus, and Pikachu and fight to knock opponents off the stage.',
     gradientClass: 'cover-gradient-2',
     icon: 'fa-hand-fist',
     coverImage: 'covers/super-smash-bros-64.webp',
     system: 'n64'
   },
-  /*
   {
     id: 'zelda_mm',
     title: "The Legend of Zelda: Majora's Mask",
@@ -369,5 +368,5 @@ export const N64_GAMES: Game[] = [
     icon: 'fa-bug',
     system: 'n64'
   },
-  */
+  
 ]
