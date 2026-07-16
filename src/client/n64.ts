@@ -66,6 +66,19 @@ export const N64_GAMES: Game[] = [
     system: 'n64'
   },
   {
+    id: 'super_smash_bros_remix',
+    title: 'Super Smash Bros. Remix',
+    publisher: 'Nintendo / HAL Laboratory',
+    year: 1999,
+    genre: 'Fighting / Brawler',
+    romUrl: 'games/sremix.z64',
+    description: 'The classic crossover fighting game. New Characters added',
+    gradientClass: 'cover-gradient-2',
+    icon: 'fa-hand-fist',
+    coverImage: 'covers/super-smash-bros-64.webp',
+    system: 'n64'
+  },
+  {
     id: 'zelda_mm',
     title: "The Legend of Zelda: Majora's Mask",
     publisher: 'Nintendo',
