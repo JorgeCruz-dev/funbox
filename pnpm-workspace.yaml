@@ -1,0 +1,4 @@
+# Allow esbuild (a Vite dependency) to run its install script.
+# Without this, pnpm 11 blocks it and `pnpm install` fails with ERR_PNPM_IGNORED_BUILDS.
+allowBuilds:
+  esbuild: true
