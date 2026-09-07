@@ -27,6 +27,9 @@ export const SNES_GAMES: Game[] = [
     system: 'snes'
   },
   
+  // NOTE: every title below streams its ROM from archive.org, so these entries
+  // are commented out until local ROMs are added under public/games/.
+  /*
   {
     id: 'super_metroid',
     title: 'Super Metroid',
@@ -603,4 +606,5 @@ export const SNES_GAMES: Game[] = [
     icon: 'fa-hand-fist',
     system: 'snes'
   },
+  */
 ]

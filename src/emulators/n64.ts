@@ -78,6 +78,9 @@ export const N64_GAMES: Game[] = [
     coverImage: 'covers/super-smash-bros-64.webp',
     system: 'n64'
   },
+  // NOTE: every title below streams its ROM from archive.org, so these entries
+  // are commented out until local ROMs are added under public/games/.
+  /*
   {
     id: 'zelda_mm',
     title: "The Legend of Zelda: Majora's Mask",
@@ -381,5 +384,5 @@ export const N64_GAMES: Game[] = [
     icon: 'fa-bug',
     system: 'n64'
   },
-  
+  */
 ]

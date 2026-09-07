@@ -1,8 +1,6 @@
 // 🎮 Funbox Retro Main Logic (N64, SNES & GBA) 🎮
-import { GBA_GAMES } from './gba';
-import { N64_GAMES } from './n64';
-import { SNES_GAMES } from './snes';
-import { Game } from './types';
+import { GBA_GAMES, N64_GAMES, SNES_GAMES } from "./emulators/emulators"
+import { Game } from './emulators/types';
 
 // 2. Focused Games Catalog (Matching user ROM filenames)
 const FEATURED_GAMES: Game[] = [...N64_GAMES, ...SNES_GAMES, ...GBA_GAMES];
@@ -195,7 +193,6 @@ async function fetchWithProgress(
 
 function deobfuscateROM(buffer: ArrayBuffer): Uint8Array {
   const view = new Uint8Array(buffer);
-  const SIGNATURE = 'OBFS';
   
   const hasSignature = view.length >= 4 &&
     view[0] === 0x4F && // 'O'

@@ -2,6 +2,9 @@ import { Game } from "./types";
 
 export const GBA_GAMES: Game[] = [
   // --- GAME BOY ADVANCE (GBA) GAMES ---
+  // NOTE: every GBA title below streams its ROM from archive.org, so all entries
+  // are commented out until local ROMs are added under public/games/.
+  /*
   {
     id: 'pokemon_ruby_sapphire',
     title: 'Pokémon - Ruby Version & Sapphire Version',
@@ -614,5 +617,5 @@ export const GBA_GAMES: Game[] = [
     icon: 'fa-clone',
     system: 'gba'
   }
-
+  */
 ]

@@ -16,5 +16,5 @@
     "noImplicitReturns": true,
     "types": ["vite/client"]
   },
-  "include": ["src/client/**/*"]
+  "include": ["src/**/*", "src/main.ts", "src/emulators/types.ts", "src/vite-env.d.ts"]
 }
