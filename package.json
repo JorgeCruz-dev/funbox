@@ -16,5 +16,6 @@
     "vite": "^5.2.11"
   },
   "author": "jorgecruz-dev",
-  "license": "ISC"
+  "license": "ISC",
+  "packageManager": "pnpm@11.17.0"
 }
