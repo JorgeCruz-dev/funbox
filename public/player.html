@@ -90,6 +90,16 @@
     const gameName = params.get('gameName') || 'Retro Game';
     const core = params.get('core') || 'n64';
 
+    // Map our internal system id to the EmulatorJS core name.
+    // Neo Geo runs on the FinalBurn Neo (fbneo) core.
+    const EJS_CORE_MAP = {
+      n64: 'n64',
+      snes: 'snes',
+      gba: 'gba',
+      neogeo: 'fbneo'
+    };
+    const ejsCore = EJS_CORE_MAP[core] || core;
+
     // Set dynamic loader text
     const loaderText = document.querySelector('.loader-text');
     if (loaderText) {
@@ -98,10 +108,11 @@
 
     // Assign global configuration to EJS
     window.EJS_player = '#game';
-    window.EJS_core = core;
+    window.EJS_core = ejsCore;
     window.EJS_gameUrl = gameUrl;
     window.EJS_gameName = gameName;
     window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+    window.EJS_startOnLoaded = true;
 
     // Default graphics settings: VSync disabled by default
     window.EJS_defaultOptions = {
@@ -138,6 +149,32 @@
           22: { 'value': 's', 'value2': 'RIGHT_STICK_Y:+1' }, // C-DOWN
           21: { 'value': 'a', 'value2': 'RIGHT_STICK_X:-1' }, // C-LEFT
           20: { 'value': 'd', 'value2': 'RIGHT_STICK_X:+1' }  // C-RIGHT
+        },
+        1: {},
+        2: {},
+        3: {}
+      };
+    } else if (core === 'neogeo') {
+      // NEO GEO default controls (FinalBurn Neo core).
+      // Neo Geo has a joystick + 4 face buttons: A B C D.
+      window.EJS_defaultControls = {
+        0: {
+          0: { 'value': 'x', 'value2': 'BUTTON_2' },     // NEO GEO B Button
+          8: { 'value': 'z', 'value2': 'BUTTON_1' },     // NEO GEO A Button
+          9: { 'value': 's', 'value2': 'BUTTON_3' },     // NEO GEO C Button
+          1: { 'value': 'a', 'value2': 'BUTTON_4' },     // NEO GEO D Button
+          2: { 'value': 'shift', 'value2': 'SELECT' },   // Select / Coin
+          3: { 'value': 'enter', 'value2': 'START' },    // Start
+
+          // Joystick (D-Pad)
+          4: { 'value': 'up arrow', 'value2': 'DPAD_UP' },
+          5: { 'value': 'down arrow', 'value2': 'DPAD_DOWN' },
+          6: { 'value': 'left arrow', 'value2': 'DPAD_LEFT' },
+          7: { 'value': 'right arrow', 'value2': 'DPAD_RIGHT' },
+
+          // Convenience: mirror C/D onto the shoulder buttons for pad users
+          10: { 'value': 'q', 'value2': 'BUTTON_3' },
+          11: { 'value': 'e', 'value2': 'BUTTON_4' }
         },
         1: {},
         2: {},

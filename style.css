@@ -241,6 +241,13 @@ body {
   box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
 }
 
+.system-btn[data-system="neogeo"].active {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(250, 204, 21, 0.05) 100%);
+  border-color: var(--color-red);
+  color: var(--color-red);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
+}
+
 .system-btn.active i {
   transform: scale(1.1);
 }

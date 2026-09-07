@@ -1,11 +1,13 @@
-// 🎮 Funbox Retro Main Logic (N64, SNES & GBA) 🎮
-import { GBA_GAMES, N64_GAMES, SNES_GAMES } from "./emulators/emulators"
+// 🎮 Funbox Retro Main Logic (N64, SNES, GBA & NEOGEO) 🎮
+import { GBA_GAMES, N64_GAMES, SNES_GAMES, NEOGEO_GAMES } from "./emulators/emulators"
 import { Game } from './emulators/types';
 
+type SystemId = 'n64' | 'snes' | 'gba' | 'neogeo';
+
 // 2. Focused Games Catalog (Matching user ROM filenames)
-const FEATURED_GAMES: Game[] = [...N64_GAMES, ...SNES_GAMES, ...GBA_GAMES];
+const FEATURED_GAMES: Game[] = [...N64_GAMES, ...SNES_GAMES, ...GBA_GAMES, ...NEOGEO_GAMES];
 // 3. Global State
-let currentSystem: 'n64' | 'snes' | 'gba' = 'n64';
+let currentSystem: SystemId = 'n64';
 let currentBlobUrl: string | null = null;
 let downloadAbortController: AbortController | null = null;
 
@@ -48,6 +50,20 @@ function updateControlsGuide() {
       </div>
       <p class="controllers-tip"><i class="fa-solid fa-circle-info"></i> Plug in any standard USB/Bluetooth controller (PS5, Xbox, Switch) and it will map automatically!</p>
     `;
+  } else if (currentSystem === 'neogeo') {
+    title.textContent = 'NEO GEO Controller Map';
+    body.innerHTML = `
+      <div class="control-grid">
+        <div class="control-row"><span>Joystick</span><kbd><i class="fa-solid fa-arrows-up-down-left-right"></i> Arrows</kbd></div>
+        <div class="control-row"><span>Start Button</span><kbd>Enter</kbd></div>
+        <div class="control-row"><span>Select / Coin</span><kbd>Shift</kbd></div>
+        <div class="control-row"><span>Button A</span><kbd>Z</kbd></div>
+        <div class="control-row"><span>Button B</span><kbd>X</kbd></div>
+        <div class="control-row"><span>Button C</span><kbd>A</kbd></div>
+        <div class="control-row"><span>Button D</span><kbd>S</kbd></div>
+      </div>
+      <p class="controllers-tip"><i class="fa-solid fa-circle-info"></i> Plug in any standard USB/Bluetooth controller (PS5, Xbox, Switch) and it will map automatically! Neo Geo's 4 face buttons (A B C D) sit on the right pad.</p>
+    `;
   } else {
     title.textContent = 'SNES Controller Map';
     body.innerHTML = `
@@ -78,6 +94,8 @@ function renderGamesGrid(filterText = '') {
       libraryTitle.textContent = 'N64 Games Library';
     } else if (currentSystem === 'gba') {
       libraryTitle.textContent = 'GBA Games Library';
+    } else if (currentSystem === 'neogeo') {
+      libraryTitle.textContent = 'NEO GEO Games Library';
     } else {
       libraryTitle.textContent = 'SNES Games Library';
     }
@@ -240,7 +258,18 @@ async function launchGame(gameUrl: string, gameTitle: string) {
 
   let finalGameUrl = gameUrl;
 
-  if (gameUrl.startsWith('games/')) {
+  // Arcade cores (FBNeo / Neo Geo) identify the game by the ROM archive's
+  // FILENAME (e.g. "mslug5x.zip" -> romset "mslug5x"). Downloading it into a
+  // blob URL strips that name and the core reports "romset unknown", so serve
+  // these ROMs by their real path and skip the deobfuscation step.
+  const isArcadeRom = core === 'neogeo' || gameUrl.toLowerCase().endsWith('.zip');
+
+  if (gameUrl.startsWith('games/') && isArcadeRom) {
+    if (loader) {
+      loader.style.display = 'none';
+    }
+    finalGameUrl = gameUrl;
+  } else if (gameUrl.startsWith('games/')) {
     if (loader) {
       loader.style.display = 'flex';
     }
@@ -359,41 +388,34 @@ function setupEventListeners() {
   const n64Btn = document.getElementById('system-btn-n64');
   const snesBtn = document.getElementById('system-btn-snes');
   const gbaBtn = document.getElementById('system-btn-gba');
+  const neogeoBtn = document.getElementById('system-btn-neogeo');
 
-  const selectSystem = (system: 'n64' | 'snes' | 'gba') => {
+  const systemButtons: Record<SystemId, HTMLElement | null> = {
+    n64: n64Btn,
+    snes: snesBtn,
+    gba: gbaBtn,
+    neogeo: neogeoBtn,
+  };
+
+  const systemAccent: Record<SystemId, string> = {
+    n64: 'var(--color-gold)',
+    snes: 'var(--color-blue)',
+    gba: 'var(--color-green)',
+    neogeo: 'var(--color-red)',
+  };
+
+  const selectSystem = (system: SystemId) => {
     currentSystem = system;
-    
+
     // Update active class on buttons
-    if (system === 'n64') {
-      n64Btn?.classList.add('active');
-      snesBtn?.classList.remove('active');
-      gbaBtn?.classList.remove('active');
-      
-      // Update library subtitle border color with N64 gold
-      const headerTitle = document.getElementById('library-title');
-      if (headerTitle) {
-        headerTitle.style.borderLeftColor = 'var(--color-gold)';
-      }
-    } else if (system === 'gba') {
-      n64Btn?.classList.remove('active');
-      snesBtn?.classList.remove('active');
-      gbaBtn?.classList.add('active');
-      
-      // Update library subtitle border color with GBA green
-      const headerTitle = document.getElementById('library-title');
-      if (headerTitle) {
-        headerTitle.style.borderLeftColor = 'var(--color-green)';
-      }
-    } else {
-      n64Btn?.classList.remove('active');
-      snesBtn?.classList.add('active');
-      gbaBtn?.classList.remove('active');
-      
-      // Update library subtitle border color with SNES blue
-      const headerTitle = document.getElementById('library-title');
-      if (headerTitle) {
-        headerTitle.style.borderLeftColor = 'var(--color-blue)';
-      }
+    (Object.keys(systemButtons) as SystemId[]).forEach((key) => {
+      systemButtons[key]?.classList.toggle('active', key === system);
+    });
+
+    // Update library subtitle border color to match the selected system
+    const headerTitle = document.getElementById('library-title');
+    if (headerTitle) {
+      headerTitle.style.borderLeftColor = systemAccent[system];
     }
 
     updateControlsGuide();
@@ -403,6 +425,7 @@ function setupEventListeners() {
   n64Btn?.addEventListener('click', () => selectSystem('n64'));
   snesBtn?.addEventListener('click', () => selectSystem('snes'));
   gbaBtn?.addEventListener('click', () => selectSystem('gba'));
+  neogeoBtn?.addEventListener('click', () => selectSystem('neogeo'));
 
   // Search input
   document.getElementById('search-input')?.addEventListener('input', (e) => {

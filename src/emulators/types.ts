@@ -11,5 +11,5 @@ export interface Game {
   gradientClass: string;
   icon: string;
   coverImage?: string;
-  system: 'n64' | 'snes' | 'gba';
+  system: 'n64' | 'snes' | 'gba' | 'neogeo';
 }
