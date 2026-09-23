@@ -26,6 +26,30 @@ export const SNES_GAMES: Game[] = [
     icon: 'fa-flag-checkered',
     system: 'snes'
   },
+  {
+    id: 'doom',
+    title: 'Doom',
+    publisher: 'Williams / Sculptured Software',
+    year: 1995,
+    genre: 'First-Person Shooter',
+    romUrl: 'games/dm.sfc',
+    description: "The Super FX powered port of id Software's legendary shooter. Blast through demonic hordes across the moons of Mars and into Hell itself.",
+    gradientClass: 'cover-gradient-3',
+    icon: 'fa-skull',
+    system: 'snes'
+  },
+  {
+    id: 'sunset_riders',
+    title: 'Sunset Riders',
+    publisher: 'Konami',
+    year: 1993,
+    genre: 'Run & Gun',
+    romUrl: 'games/sr.sfc',
+    description: 'Hunt down outlaws for bounty rewards in a fast-paced, colorful, bullet-filled cooperative run-and-gun wild-western arcade classic.',
+    gradientClass: 'cover-gradient-4',
+    icon: 'fa-hat-cowboy',
+    system: 'snes'
+  },
   
   // NOTE: every title below streams its ROM from archive.org, so these entries
   // are commented out until local ROMs are added under public/games/.
@@ -436,18 +460,6 @@ export const SNES_GAMES: Game[] = [
     description: 'Enjoy a wild steampunk-western gallery shooter! Dodge crossfire, swing lasso tools, and gun down giant biomechanical bosses.',
     gradientClass: 'cover-gradient-4',
     icon: 'fa-gun',
-    system: 'snes'
-  },
-  {
-    id: 'sunset_riders',
-    title: 'Sunset Riders',
-    publisher: 'Konami',
-    year: 1993,
-    genre: 'Run & Gun',
-    romUrl: 'https://archive.org/download/super-nintendo-snes-rom-collection-usa/Sunset%20Riders%20%28USA%29.zip',
-    description: 'Hunt down outlaws for bounty rewards in a fast-paced, colorful, bullet-filled cooperative run-and-gun wild-western arcade classic.',
-    gradientClass: 'cover-gradient-1',
-    icon: 'fa-dollar-sign',
     system: 'snes'
   },
   {
