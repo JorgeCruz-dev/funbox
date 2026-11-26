@@ -2,18 +2,28 @@ import { Game } from "./types";
 
 export const GBA_GAMES: Game[] = [
   // --- GAME BOY ADVANCE (GBA) GAMES ---
-  // NOTE: every GBA title below streams its ROM from archive.org, so all entries
-  // are commented out until local ROMs are added under public/games/.
-  /*
+  // Local ROMs: obfuscated + gzipped (pnpm obfuscate && pnpm compress-roms).
   {
-    id: 'pokemon_ruby_sapphire',
-    title: 'Pokémon - Ruby Version & Sapphire Version',
+    id: 'pokemon_ruby',
+    title: 'Pokémon - Ruby Version',
     publisher: 'Nintendo / Game Freak',
     year: 2002,
     genre: 'Role-Playing Game',
-    romUrl: 'https://archive.org/download/GameboyAdvanceRomCollectionByGhostware/Pokemon%20-%20Ruby%20Version%20%26%20Sapphire%20Version.zip/Pokemon%20-%20Saphir-Edition%20%28G%29%20%28V1.0%29.gba',
-    description: 'Explore the vast, water-filled Hoenn region, meet the third generation of Pokémon, and fight back Team Magma or Team Aqua.',
+    romUrl: 'games/pokemon_ruby.gba.gz',
+    description: 'Explore the Hoenn region, meet the third generation of Pokémon, and stop Team Magma from awakening Groudon.',
     gradientClass: 'cover-gradient-1',
+    icon: 'fa-mountain-sun',
+    system: 'gba'
+  },
+  {
+    id: 'pokemon_sapphire',
+    title: 'Pokémon - Sapphire Version',
+    publisher: 'Nintendo / Game Freak',
+    year: 2002,
+    genre: 'Role-Playing Game',
+    romUrl: 'games/pokemon_sapphire.gba.gz',
+    description: 'Explore the water-filled Hoenn region, meet the third generation of Pokémon, and stop Team Aqua from awakening Kyogre.',
+    gradientClass: 'cover-gradient-2',
     icon: 'fa-water',
     system: 'gba'
   },
@@ -23,22 +33,34 @@ export const GBA_GAMES: Game[] = [
     publisher: 'Nintendo / Game Freak',
     year: 2004,
     genre: 'Role-Playing Game',
-    romUrl: 'https://archive.org/download/GameboyAdvanceRomCollectionByGhostware/Pokemon%20-%20Emerald%20Version.zip/Pokemon%20-%20Emerald%20%28J%29.gba',
-    description: 'The definitive Hoenn adventure. Command premium battle strategies inside Battle Frontier to stop Groudon and Kyogre clash using Rayquaza.',
-    gradientClass: 'cover-gradient-2',
+    romUrl: 'games/pokemon_emerald.gba.gz',
+    description: 'The definitive Hoenn adventure. Take on the Battle Frontier and call on Rayquaza to end the clash between Groudon and Kyogre.',
+    gradientClass: 'cover-gradient-3',
     icon: 'fa-gem',
     system: 'gba'
   },
   {
-    id: 'pokemon_leafgreen_firered',
-    title: 'Pokémon - Leaf Green Version & Fire Red Version',
+    id: 'pokemon_firered',
+    title: 'Pokémon - FireRed Version',
     publisher: 'Nintendo / Game Freak',
     year: 2004,
     genre: 'Role-Playing Game',
-    romUrl: 'https://archive.org/download/GameboyAdvanceRomCollectionByGhostware/Pokemon%20-%20Leaf%20Green%20Version%20%26%20Fire%20Red%20Version.zip/Pokemon%20-%20Fire%20Red%20%28J%29%20%28V1.0%29.gba',
-    description: 'Re-explore Kanto in a gorgeous expanded layout. Journey to complete the Pokédex and conquer elite league championships.',
-    gradientClass: 'cover-gradient-3',
+    romUrl: 'games/pokemon_firered.gba.gz',
+    description: 'Re-explore Kanto in this remake of the original adventure. Complete the Pokédex and challenge the Elite Four.',
+    gradientClass: 'cover-gradient-4',
     icon: 'fa-fire',
+    system: 'gba'
+  },
+  {
+    id: 'pokemon_leafgreen',
+    title: 'Pokémon - LeafGreen Version',
+    publisher: 'Nintendo / Game Freak',
+    year: 2004,
+    genre: 'Role-Playing Game',
+    romUrl: 'games/pokemon_leafgreen.gba.gz',
+    description: 'Return to Kanto with a different set of Pokémon to catch. Complete the Pokédex and challenge the Elite Four.',
+    gradientClass: 'cover-gradient-1',
+    icon: 'fa-leaf',
     system: 'gba'
   },
   {
@@ -47,9 +69,9 @@ export const GBA_GAMES: Game[] = [
     publisher: 'Nintendo / Chunsoft',
     year: 2005,
     genre: 'Dungeon Crawler',
-    romUrl: 'https://archive.org/download/GameboyAdvanceRomCollectionByGhostware/Pokemon%20Mystery%20Dungeon%20-%20Red%20Rescue%20Team.zip/Pokemon%20Mystery%20Dungeon%20-%20Red%20Rescue%20Team%20%28E%29%20%28M5%29.gba',
-    description: 'Wake up directly as a Pokémon! Cooperate with companions inside mystery dungeons to execute heroic rescues and discover your identity.',
-    gradientClass: 'cover-gradient-4',
+    romUrl: 'games/pokemon_mystery_dungeon.gba.gz',
+    description: 'Wake up as a Pokémon! Team up with a partner, explore mystery dungeons, carry out rescues and uncover who you really are.',
+    gradientClass: 'cover-gradient-2',
     icon: 'fa-compass',
     system: 'gba'
   },
@@ -59,12 +81,112 @@ export const GBA_GAMES: Game[] = [
     publisher: 'Nintendo / Jupiter',
     year: 2003,
     genre: 'Pinball',
-    romUrl: 'https://archive.org/download/GameboyAdvanceRomCollectionByGhostware/Pokemon%20Pinball%20-%20Ruby%20%26%20Sapphire.zip/Pokemon%20Pinball%20-%20Ruby%20%26%20Sapphire%20%28E%29%20%28M5%29.gba',
-    description: 'Launch Pokéball pinballs across vibrant boards, catch and hatch Pokémon, and record high score combinations.',
-    gradientClass: 'cover-gradient-1',
+    romUrl: 'games/pokemon_pinball_rs.gba.gz',
+    description: 'Launch Poké Balls across vibrant boards, catch and hatch Pokémon, and chase high scores.',
+    gradientClass: 'cover-gradient-3',
     icon: 'fa-circle-dot',
     system: 'gba'
   },
+  {
+    id: 'castlevania_circle',
+    title: 'Castlevania - Circle of the Moon',
+    publisher: 'Konami',
+    year: 2001,
+    genre: 'Metroidvania',
+    romUrl: 'games/castlevania_circle.gba.gz',
+    description: 'Confront Camilla and Dracula in a dark castle, combining magic cards to unlock new powers.',
+    gradientClass: 'cover-gradient-4',
+    icon: 'fa-moon',
+    system: 'gba'
+  },
+  {
+    id: 'castlevania_harmony',
+    title: 'Castlevania - Harmony of Dissonance',
+    publisher: 'Konami',
+    year: 2002,
+    genre: 'Metroidvania',
+    romUrl: 'games/castlevania_harmony.gba.gz',
+    description: 'Guide Juste Belmont through two parallel versions of Dracula\'s castle to rescue a lost childhood friend.',
+    gradientClass: 'cover-gradient-1',
+    icon: 'fa-wand-magic',
+    system: 'gba'
+  },
+  {
+    id: 'castlevania_aria',
+    title: 'Castlevania - Aria of Sorrow',
+    publisher: 'Konami',
+    year: 2003,
+    genre: 'Metroidvania',
+    romUrl: 'games/castlevania_aria.gba.gz',
+    description: 'Play as Soma Cruz inside Dracula\'s eclipse-entombed castle and absorb monsters\' souls to unleash their powers.',
+    gradientClass: 'cover-gradient-2',
+    icon: 'fa-ghost',
+    system: 'gba'
+  },
+  {
+    id: 'crash_nitro_kart',
+    title: 'Crash Nitro Kart',
+    publisher: 'Vivendi Universal / Vicarious Visions',
+    year: 2003,
+    genre: 'Kart Racing',
+    romUrl: 'games/crash_nitro_kart.gba.gz',
+    description: 'Crash, Coco and friends race across a galaxy of tracks to save Earth from Emperor Velo XXVII.',
+    gradientClass: 'cover-gradient-3',
+    icon: 'fa-flag-checkered',
+    system: 'gba'
+  },
+  {
+    id: 'doom',
+    title: 'Doom',
+    publisher: 'Activision / id Software',
+    year: 2001,
+    genre: 'First-Person Shooter',
+    romUrl: 'games/doom.gba.gz',
+    description: 'The classic first-person shooter on a handheld. Blast through the demon-infested bases of Mars\' moons.',
+    gradientClass: 'cover-gradient-4',
+    icon: 'fa-skull',
+    system: 'gba'
+  },
+  {
+    id: 'doom2',
+    title: 'Doom II',
+    publisher: 'Activision / id Software',
+    year: 2002,
+    genre: 'First-Person Shooter',
+    romUrl: 'games/doom2.gba.gz',
+    description: 'Hell has come to Earth. Fight your way through the full sequel, complete with the super shotgun.',
+    gradientClass: 'cover-gradient-1',
+    icon: 'fa-fire-flame-curved',
+    system: 'gba'
+  },
+  {
+    id: 'iss',
+    title: 'International Superstar Soccer',
+    publisher: 'Konami',
+    year: 2001,
+    genre: 'Sports',
+    romUrl: 'games/iss.gba.gz',
+    description: 'Konami\'s classic football series on the go. Pick a national team and compete for the cup.',
+    gradientClass: 'cover-gradient-2',
+    icon: 'fa-futbol',
+    system: 'gba'
+  },
+  {
+    id: 'iss_advance',
+    title: 'International Superstar Soccer Advance',
+    publisher: 'Konami',
+    year: 2002,
+    genre: 'Sports',
+    romUrl: 'games/iss_advance.gba.gz',
+    description: 'A faster, sharper take on ISS football with national teams, tournaments and league play.',
+    gradientClass: 'cover-gradient-3',
+    icon: 'fa-trophy',
+    system: 'gba'
+  },
+
+  // NOTE: the titles below stream their ROMs from archive.org, so they stay
+  // commented out until local ROMs are added under public/games/.
+  /*
   {
     id: 'zelda_alttp_fourswords',
     title: 'The Legend of Zelda: A Link To The Past / Four Swords',
@@ -111,42 +233,6 @@ export const GBA_GAMES: Game[] = [
     description: 'Re-live bounty hunter Samus Aran\'s original mission on Planet Zebes in of the finest action platform revisions ever made.',
     gradientClass: 'cover-gradient-1',
     icon: 'fa-jet-fighter',
-    system: 'gba'
-  },
-  {
-    id: 'castlevania_aria',
-    title: 'Castlevania - Aria of Sorrow',
-    publisher: 'Konami',
-    year: 2003,
-    genre: 'Metroidvania',
-    romUrl: 'https://archive.org/download/GameboyAdvanceRomCollectionByGhostware/Castlevania%20-%20Aria%20of%20Sorrow.zip/Castlevania%20-%20Aria%20of%20Sorrow%20%28U%29%20%5B%21%5D.gba',
-    description: 'Play as Soma Cruz inside Dracula\'s eclipse-entombed castle. Command monsters\' souls to unleash magic.',
-    gradientClass: 'cover-gradient-2',
-    icon: 'fa-ghost',
-    system: 'gba'
-  },
-  {
-    id: 'castlevania_circle',
-    title: 'Castlevania - Circle of the Moon',
-    publisher: 'Konami',
-    year: 2001,
-    genre: 'Metroidvania',
-    romUrl: 'https://archive.org/download/GameboyAdvanceRomCollectionByGhostware/Castlevania%20-%20Circle%20of%20the%20Moon.zip/Castlevania%20-%20Circle%20of%20the%20Moon%20%28U%29%20%5B%21%5D.gba',
-    description: 'Confront Carmilla and Dracula inside dark chambers using customizable card combinations.',
-    gradientClass: 'cover-gradient-3',
-    icon: 'fa-skull',
-    system: 'gba'
-  },
-  {
-    id: 'castlevania_harmony',
-    title: 'Castlevania - Harmony of Dissonance',
-    publisher: 'Konami',
-    year: 2002,
-    genre: 'Metroidvania',
-    romUrl: 'https://archive.org/download/GameboyAdvanceRomCollectionByGhostware/Castlevania%20-%20Harmony%20of%20Dissonance.zip/Castlevania%20-%20Harmony%20of%20Dissonance%20%28E%29%20%5B%21%5D.gba',
-    description: 'Direct Juste Belmont through parallel castle dimensions to retrieve a lost childhood companion.',
-    gradientClass: 'cover-gradient-4',
-    icon: 'fa-wand-magic',
     system: 'gba'
   },
   {
