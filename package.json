@@ -9,11 +9,10 @@
     "start": "vite preview",
     "obfuscate": "node scripts/obfuscate.js"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@types/node": "^20.12.12",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.11"
+    "@types/node": "^20.19.43",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.8"
   },
   "author": "jorgecruz-dev",
   "license": "ISC",
