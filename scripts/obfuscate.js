@@ -19,7 +19,7 @@ function obfuscateDirectory() {
 
   for (const file of files) {
     const ext = path.extname(file).toLowerCase();
-    if (ext !== '.z64' && ext !== '.sfc') {
+    if (ext !== '.z64' && ext !== '.sfc' && ext !== '.gba') {
       continue;
     }
 

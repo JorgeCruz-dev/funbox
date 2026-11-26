@@ -9,12 +9,12 @@ const FEATURED_GAMES: Game[] = [...N64_GAMES, ...SNES_GAMES, ...GBA_GAMES, ...NE
 // 3. Global State
 let currentSystem: SystemId = 'n64';
 let currentBlobUrl: string | null = null;
-let downloadAbortController: AbortController | null = null;
 
 // 4. Main Initialization
 document.addEventListener('DOMContentLoaded', async () => {
   setupEventListeners();
   renderGamesGrid();
+  prefetchEmulatorFiles(currentSystem);
 });
 
 // Update Controls Guide Card Content Dynamically
@@ -159,7 +159,20 @@ function renderGamesGrid(filterText = '') {
       </div>
     `;
 
+    // Hovering a card for a moment starts its ROM download, so most of it is
+    // done by the time the user clicks. Mouse only: on touch, the tap follows
+    // immediately and the prefetch would gain nothing.
+    if (isPlayable && isManagedRom(game.system, game.romUrl)) {
+      card.addEventListener('pointerenter', (e) => {
+        if (e.pointerType !== 'mouse' || !canPrefetch()) return;
+        window.clearTimeout(hoverPrefetchTimer);
+        hoverPrefetchTimer = window.setTimeout(() => getRomDownload(game.romUrl), HOVER_PREFETCH_DELAY_MS);
+      });
+      card.addEventListener('pointerleave', () => window.clearTimeout(hoverPrefetchTimer));
+    }
+
     card.addEventListener('click', () => {
+      window.clearTimeout(hoverPrefetchTimer);
       if (isPlayable) {
         launchGame(game.romUrl, game.title);
       } else {
@@ -209,6 +222,125 @@ async function fetchWithProgress(
   return allChunks.buffer;
 }
 
+// --- ROM download manager -------------------------------------------------
+// One ROM download at a time, shared by hover-prefetch and launchGame, so a
+// click on a game that is already prefetching picks up where it left off.
+// The last finished download stays in memory so reopening a game is instant.
+interface RomDownload {
+  url: string;
+  controller: AbortController;
+  promise: Promise<ArrayBuffer>;
+  loaded: number;
+  total: number;
+  done: boolean;
+  onProgress: ((loaded: number, total: number) => void) | null;
+}
+
+let romDownload: RomDownload | null = null;
+// How long the pointer must rest on a game card before its ROM is prefetched;
+// keeps casual mouse movement across the grid from starting downloads.
+const HOVER_PREFETCH_DELAY_MS = 400;
+let hoverPrefetchTimer: number | undefined;
+// Bumped on every launch/close so an async launch can tell it was superseded.
+let launchId = 0;
+
+function getRomDownload(url: string): RomDownload {
+  if (romDownload && romDownload.url === url) return romDownload;
+  cancelRomDownload();
+
+  const dl = { url, controller: new AbortController(), loaded: 0, total: 0, done: false, onProgress: null } as RomDownload;
+  dl.promise = fetchWithProgress(
+    url,
+    (loaded, total) => {
+      dl.loaded = loaded;
+      dl.total = total;
+      dl.onProgress?.(loaded, total);
+    },
+    dl.controller.signal
+  );
+  dl.promise.then(
+    () => {
+      dl.done = true;
+    },
+    () => {
+      // A failed or aborted download must not be reused by the next launch.
+      if (romDownload === dl) romDownload = null;
+    }
+  );
+  romDownload = dl;
+  return dl;
+}
+
+function cancelRomDownload() {
+  if (!romDownload) return;
+  romDownload.controller.abort();
+  romDownload = null;
+}
+
+// Neo Geo romsets are handed to EmulatorJS by path (see launchGame), so they
+// never go through the ROM download manager.
+function isArcadeRom(system: SystemId, url: string): boolean {
+  return system === 'neogeo' || url.toLowerCase().endsWith('.zip');
+}
+
+function isManagedRom(system: SystemId, url: string): boolean {
+  return url.startsWith('games/') && !isArcadeRom(system, url);
+}
+
+// Skip speculative downloads for users who asked to save data or are on 2G.
+function canPrefetch(): boolean {
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+  return !(conn && (conn.saveData || /2g$/.test(conn.effectiveType ?? '')));
+}
+
+// Cartridge ROMs are stored gzipped (scripts/compress-roms.js). Checking the
+// gzip magic bytes instead of the file extension also covers servers that
+// already decoded the file via Content-Encoding.
+async function gunzipIfNeeded(buffer: ArrayBuffer): Promise<ArrayBuffer> {
+  const head = new Uint8Array(buffer, 0, Math.min(2, buffer.byteLength));
+  if (head[0] !== 0x1f || head[1] !== 0x8b) return buffer;
+  const stream = new Blob([buffer]).stream().pipeThrough(new DecompressionStream('gzip'));
+  return new Response(stream).arrayBuffer();
+}
+
+// --- EmulatorJS file prefetch ---------------------------------------------
+// Warms the browser HTTP cache with the files player.html's EmulatorJS will
+// request, so they are ready while the ROM downloads. Must stay in sync with
+// EJS_pathtodata and the EJS core names used in public/player.html.
+const EJS_DATA_URL = 'https://cdn.emulatorjs.org/stable/data/';
+const EJS_CORE_NAMES: Record<SystemId, string> = {
+  n64: 'mupen64plus_next',
+  snes: 'snes9x',
+  gba: 'mgba',
+  neogeo: 'fbneo',
+};
+const prefetchedUrls = new Set<string>();
+let webgl2Supported: boolean | null = null;
+
+function prefetchUrl(url: string, crossOrigin: boolean) {
+  if (prefetchedUrls.has(url)) return;
+  prefetchedUrls.add(url);
+  const link = document.createElement('link');
+  link.rel = 'prefetch';
+  link.href = url;
+  if (crossOrigin) link.crossOrigin = 'anonymous';
+  document.head.appendChild(link);
+}
+
+function prefetchEmulatorFiles(system: SystemId) {
+  if (!canPrefetch()) return;
+  // loader.js adds these as plain <script>/<link> tags (no CORS mode).
+  prefetchUrl(`${EJS_DATA_URL}emulator.min.js`, false);
+  prefetchUrl(`${EJS_DATA_URL}emulator.min.css`, false);
+
+  // EmulatorJS falls back to "-legacy" cores without WebGL2.
+  webgl2Supported ??= !!document.createElement('canvas').getContext('webgl2');
+  const core = EJS_CORE_NAMES[system];
+  const variant = webgl2Supported ? '' : '-legacy';
+  prefetchUrl(`${EJS_DATA_URL}cores/reports/${core}.json`, true);
+  prefetchUrl(`${EJS_DATA_URL}cores/${core}${variant}-wasm.data`, true);
+}
+
 function deobfuscateROM(buffer: ArrayBuffer): Uint8Array {
   const view = new Uint8Array(buffer);
   
@@ -245,16 +377,15 @@ async function launchGame(gameUrl: string, gameTitle: string) {
     currentBlobUrl = null;
   }
 
-  if (downloadAbortController) {
-    downloadAbortController.abort();
-  }
-  downloadAbortController = new AbortController();
-
+  const thisLaunch = ++launchId;
   titleSpan.textContent = gameTitle;
   const core = currentSystem;
 
   modal.style.display = 'flex';
   document.body.style.overflow = 'hidden';
+
+  // Start fetching the EmulatorJS core alongside the ROM download.
+  prefetchEmulatorFiles(core);
 
   let finalGameUrl = gameUrl;
 
@@ -262,9 +393,8 @@ async function launchGame(gameUrl: string, gameTitle: string) {
   // FILENAME (e.g. "mslug5x.zip" -> romset "mslug5x"). Downloading it into a
   // blob URL strips that name and the core reports "romset unknown", so serve
   // these ROMs by their real path and skip the deobfuscation step.
-  const isArcadeRom = core === 'neogeo' || gameUrl.toLowerCase().endsWith('.zip');
-
-  if (gameUrl.startsWith('games/') && isArcadeRom) {
+  if (gameUrl.startsWith('games/') && isArcadeRom(core, gameUrl)) {
+    cancelRomDownload();
     if (loader) {
       loader.style.display = 'none';
     }
@@ -273,31 +403,34 @@ async function launchGame(gameUrl: string, gameTitle: string) {
     if (loader) {
       loader.style.display = 'flex';
     }
-    if (progressText) {
-      progressText.textContent = 'Initializing download...';
-    }
+
+    const download = getRomDownload(gameUrl);
+    const showProgress = (loaded: number, total: number) => {
+      if (!progressText) return;
+      const loadedMB = (loaded / (1024 * 1024)).toFixed(1);
+      if (loaded === 0) {
+        progressText.textContent = 'Initializing download...';
+      } else if (total > 0) {
+        // Clamp: if the server decoded the gzip, loaded can exceed Content-Length.
+        const pct = Math.min(99, Math.round((loaded / total) * 100));
+        progressText.textContent = `Downloading ROM... ${pct}% (${loadedMB}MB of ${(total / (1024 * 1024)).toFixed(1)}MB)`;
+      } else {
+        progressText.textContent = `Downloading ROM... ${loadedMB}MB`;
+      }
+    };
+    download.onProgress = showProgress;
+    showProgress(download.loaded, download.total);
 
     try {
-      const buffer = await fetchWithProgress(
-        gameUrl, 
-        (loaded, total) => {
-          if (progressText) {
-            if (total > 0) {
-              const pct = Math.round((loaded / total) * 100);
-              progressText.textContent = `Downloading ROM... ${pct}% (${(loaded / (1024 * 1024)).toFixed(1)}MB of ${(total / (1024 * 1024)).toFixed(1)}MB)`;
-            } else {
-              progressText.textContent = `Downloading ROM... ${(loaded / (1024 * 1024)).toFixed(1)}MB`;
-            }
-          }
-        },
-        downloadAbortController.signal
-      );
+      const buffer = await download.promise;
+      download.onProgress = null;
 
       if (progressText) {
-        progressText.textContent = 'Deobfuscating game files...';
+        progressText.textContent = 'Unpacking game files...';
       }
-      
-      const romBytes = deobfuscateROM(buffer);
+
+      const romBytes = deobfuscateROM(await gunzipIfNeeded(buffer));
+      if (thisLaunch !== launchId) return; // closed or replaced while unpacking
       const blob = new Blob([romBytes as any], { type: 'application/octet-stream' });
       currentBlobUrl = URL.createObjectURL(blob);
       finalGameUrl = currentBlobUrl;
@@ -315,10 +448,9 @@ async function launchGame(gameUrl: string, gameTitle: string) {
         progressText.innerHTML = `<span style="color: var(--color-red);">Error: Failed to load game ROM</span>`;
       }
       return;
-    } finally {
-      downloadAbortController = null;
     }
   } else {
+    cancelRomDownload();
     if (loader) {
       loader.style.display = 'none';
     }
@@ -329,9 +461,13 @@ async function launchGame(gameUrl: string, gameTitle: string) {
 }
 
 function closeEmulator() {
-  if (downloadAbortController) {
-    downloadAbortController.abort();
-    downloadAbortController = null;
+  launchId++;
+
+  // Stop an unfinished download; a finished one stays in memory for a quick reopen.
+  if (romDownload && !romDownload.done) {
+    cancelRomDownload();
+  } else if (romDownload) {
+    romDownload.onProgress = null;
   }
 
   const modal = document.getElementById('emulator-modal');
@@ -420,6 +556,7 @@ function setupEventListeners() {
 
     updateControlsGuide();
     renderGamesGrid();
+    prefetchEmulatorFiles(system);
   };
 
   n64Btn?.addEventListener('click', () => selectSystem('n64'));
