@@ -9,16 +9,14 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read
 
 concurrency:
   group: pages
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -49,6 +47,16 @@ jobs:
         with:
           path: ./dist
 
+  # Deploy runs as its own job so the uploaded artifact is fully registered
+  # before deploy-pages looks it up. Running both in one job intermittently
+  # fails with: No artifacts named "github-pages" were found for this workflow run.
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
