@@ -58,6 +58,9 @@ export const NEOGEO_GAMES: Game[] = [
     icon: 'fa-person-rifle',
     system: 'neogeo'
   },
+  // TODO: re-enable once kof2002.zip is under GitHub's 100 MB file limit
+  // (the current local romset is 124 MB).
+  /*
   {
     id: 'kof_2002',
     title: "The King of Fighters 2002",
@@ -71,6 +74,7 @@ export const NEOGEO_GAMES: Game[] = [
     icon: 'fa-hand-fist',
     system: 'neogeo'
   },
+  */
 
   // NOTE: every title below streams its ROM from archive.org, so these entries
   // are commented out until local ROM sets (+ neogeo.zip BIOS) are added under
