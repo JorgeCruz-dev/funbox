@@ -198,6 +198,19 @@ export const GBA_GAMES: Game[] = [
     icon: 'fa-trophy',
     system: 'gba'
   },
+  {
+    id: 'mario_kart_super_circuit',
+    title: 'Mario Kart Super Circuit',
+    publisher: 'Nintendo / Intelligent Systems',
+    year: 2001,
+    genre: 'Kart Racing',
+    romUrl: 'games/mksupercirc.gba.gz',
+    coverImage: 'covers/mksupercirc.jpg',
+    description: 'Enjoy 40 unique hand-held kart racing tracks, drift curves, and launch shells across GBA and retro circuits.',
+    gradientClass: 'cover-gradient-1',
+    icon: 'fa-flag-checkered',
+    system: 'gba'
+  },
 
   // NOTE: the titles below stream their ROMs from archive.org, so they stay
   // commented out until local ROMs are added under public/games/.

@@ -54,7 +54,20 @@ export const SNES_GAMES: Game[] = [
     icon: 'fa-hat-cowboy',
     system: 'snes'
   },
-  
+  {
+    id: 'zelda_alttp',
+    title: 'The Legend of Zelda: A Link to the Past',
+    publisher: 'Nintendo',
+    year: 1991,
+    genre: 'Action-Adventure',
+    romUrl: 'games/alttp.sfc.gz',
+    coverImage: 'covers/alttp.webp',
+    description: 'Guide Link between the Light World and the Dark World, gather the Master Sword, and free Hyrule from the wizard Agahnim and Ganon.',
+    gradientClass: 'cover-gradient-1',
+    icon: 'fa-shield-halved',
+    system: 'snes'
+  },
+
   // NOTE: every title below streams its ROM from archive.org, so these entries
   // are commented out until local ROMs are added under public/games/.
   /*
