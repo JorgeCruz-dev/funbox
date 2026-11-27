@@ -192,6 +192,7 @@ export const GBA_GAMES: Game[] = [
     year: 2002,
     genre: 'Sports',
     romUrl: 'games/issa.gba.gz',
+    coverImage: 'covers/issa.webp',
     description: 'A faster, sharper take on ISS football with national teams, tournaments and league play.',
     gradientClass: 'cover-gradient-3',
     icon: 'fa-trophy',

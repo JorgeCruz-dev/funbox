@@ -59,8 +59,8 @@ function updateControlsGuide() {
         <div class="control-row"><span>Select / Coin</span><kbd>Shift</kbd></div>
         <div class="control-row"><span>Button A</span><kbd>Z</kbd></div>
         <div class="control-row"><span>Button B</span><kbd>X</kbd></div>
-        <div class="control-row"><span>Button C</span><kbd>A</kbd></div>
-        <div class="control-row"><span>Button D</span><kbd>S</kbd></div>
+        <div class="control-row"><span>Button C</span><kbd>C</kbd></div>
+        <div class="control-row"><span>Button D</span><kbd>V</kbd></div>
       </div>
       <p class="controllers-tip"><i class="fa-solid fa-circle-info"></i> Plug in any standard USB/Bluetooth controller (PS5, Xbox, Switch) and it will map automatically! Neo Geo's 4 face buttons (A B C D) sit on the right pad.</p>
     `;
